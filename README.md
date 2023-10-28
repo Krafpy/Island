@@ -8,8 +8,12 @@ a different structure and lots of comments so that the code appears less obscure
 for beginners. The rendering and music generation is mostly based on iq's example,
 but the synthetizer is custom made.
 
+For complete beginners new demoscene, check out this article on how to
+[*Teach Yourself Demoscene in 14 Days*](https://github.com/psenough/teach_yourself_demoscene_in_14_days).
+
 This template itself contains a very simple example intro that
-can be built and run directly. Of course when building a real demo, you will want adapt, inline, implement custom functions (possibly in assembly).
+can be built and run directly. Of course when designing a real demo, you will want adapt,
+inline some of the code here in addition to writing your own (possibly in assembly).
 
 ## File structure
 
@@ -27,17 +31,22 @@ can be built and run directly. Of course when building a real demo, you will wan
 The compilation tricks to generate a small executable follows the recommandations described
 by iq [in this article](https://iquilezles.org/articles/compilingsmall/).
 Building the project requires the following tools to be installed and accessible via the command line:
+
 - Microsoft Visual Studio's build tools `cl.exe`, `link.exe`
 (e.g. using the Developer Command Prompt)
 - [`crinkler`](https://github.com/runestubbe/Crinkler) (e.g. in PATH)
 
-Build a debug version using Microsoft's linker:
+If you are using an antivirus software it is likely to detect the compiled executable as
+a trojan. You'll need to whitelist the file or the entire folder in your antivirus before running it
+(or even before compiling it).
+
+Build an uncompressed debug version (uses Microsoft's linker):
 
 ```bash
 build.bat
 ```
 
-Or build a debug compressed executable (using crinkler)
+Or build a debug compressed executable (uses crinkler)
 
 ```bash
 build.bat tiny
