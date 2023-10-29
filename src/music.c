@@ -51,8 +51,6 @@ WAVFile* music_init() {
         sig_t s = osc_tri(fc*t);
         s *= envelope(tn, 0.1f*nd, 0.1f*nd, 0.8f*nd);
 
-        // s = s > 1.5f ? 1.5f : s < -1.5f ? -1.5f : s;
-
         buffer[2*i+0] = (short)(s*MAX_AMPLITUDE); // left channel
         buffer[2*i+1] = (short)(s*MAX_AMPLITUDE); // right channel
     }
