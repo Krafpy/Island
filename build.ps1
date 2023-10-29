@@ -55,7 +55,7 @@ if($disasm) {
     if(-Not (Test-Path -Path $disasmDir)) {
         mkdir $disasmDir
     }
-    Write-Output "Disasembling generated object files"
+    Write-Output "Disassembling generated object files"
     foreach($objFile in $objFiles) {
         $basename = (Split-Path $objFile -Leaf).Split('.')[0]
         $outOption = '/OUT:".\\{0}\\{1}.asm"' -f $disasmDir, $basename
