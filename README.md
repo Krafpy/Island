@@ -29,37 +29,38 @@ inline some of the code here in addition to writing your own (possibly in assemb
 ## Build
 
 The compilation tricks to generate a small executable follows the recommandations described
-by iq [in this article](https://iquilezles.org/articles/compilingsmall/).
-Building the project requires the following tools to be installed and accessible via the command line:
+by [in this article by iq](https://iquilezles.org/articles/compilingsmall/).
+Building the project requires the following tools to be installed and accessible via a powershell
+command line:
 
 - Microsoft Visual Studio's build tools `cl.exe`, `link.exe`
-(e.g. using the Developer Command Prompt)
+(e.g. using the Powershell Developer Command Prompt)
 - [`crinkler`](https://github.com/runestubbe/Crinkler) (e.g. in PATH)
 
 If you are using an antivirus software it is likely to detect the compiled executable as
 a trojan. You'll need to whitelist the file or the entire folder in your antivirus before running it
 (or even before compiling it).
 
-Build an uncompressed debug version (uses Microsoft's linker):
+Build an uncompressed debug version (uses MSVC's linker):
 
 ```bash
-build.bat
+.\build.ps1
 ```
 
 Or build a debug compressed executable (uses crinkler)
 
 ```bash
-build.bat tiny
+.\build.ps1 -tiny
 ```
 
-Or the compressed release (non debug):
+Or the compressed release:
 
 ```bash
-build.bat tiny release
+.\build.ps1 -tiny -release
 ```
 
 And run:
 
 ```bash
-main.exe
+.\main.exe
 ```
