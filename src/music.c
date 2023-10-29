@@ -6,7 +6,7 @@
 #include <memory.h>
 
 #define NUM_SAMPLES (MUSIC_DURATION * SAMPLE_RATE)
-#define MAX_AMPLITUDE (32767.0f/64.f) // must be less or equal than 32767
+#define MAX_AMPLITUDE (32767.0f/4.f) // must be less or equal than 32767
 
 static WAVHeader header = {
     .riffHeader = 0x46464952, // little-endian "RIFF"
