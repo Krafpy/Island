@@ -8,7 +8,7 @@ a different structure and lots of comments so that the code appears less obscure
 for beginners. The rendering and music generation is mostly based on iq's example,
 but the synthetizer is custom made.
 
-For complete beginners new demoscene, check out this article on how to
+For complete beginners to demoscene, check out this article on how to
 [*Teach Yourself Demoscene in 14 Days*](https://github.com/psenough/teach_yourself_demoscene_in_14_days).
 
 This template itself contains a very simple example intro that
