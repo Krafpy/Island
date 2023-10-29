@@ -56,7 +56,7 @@ Or build a debug compressed executable (uses crinkler)
 Or the compressed release:
 
 ```bash
-.\build.ps1 -tiny -release
+.\build.ps1 -release
 ```
 
 And run:
