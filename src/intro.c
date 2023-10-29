@@ -60,10 +60,10 @@ void intro_init(HWND hwnd) {
 }
 
 
-static GLfloat params[4*1];
+static GLfloat params[4*1] = {(float)X_RES, (float)Y_RES, 0.f, 0.f};
 
 void intro_do(GLfloat time) {
-    params[0] = time;
+    params[2] = time;
     glProgramUniform4fv(fragShader, 0, 1, params);
     glRects(-1, -1, 1, 1);
 }
