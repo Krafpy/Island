@@ -86,7 +86,7 @@ float envelope(float t, float a, float s, float r) {
 }
 
 // Triangle wave oscillator.
-sig_t osc_tri(pha_t t) {
+float osc_tri(float t) {
     // return 1.f - 2.f*fabs(fmodf(t/M_PI, 2.f) - 1.f);
     __asm {
         fld1                // 1
@@ -104,7 +104,7 @@ sig_t osc_tri(pha_t t) {
 }
 
 // Saw tooth wave oscillator.
-sig_t osc_saw(pha_t t) {
+float osc_saw(float t) {
     __asm {
         fld1                // 1
         fadd st, st         // 2
@@ -119,7 +119,7 @@ sig_t osc_saw(pha_t t) {
 }
 
 // Square wave oscillator
-sig_t osc_sqr(pha_t t) {
+float osc_sqr(float t) {
     float y = sinf(t);
     int i = *(int*)&y;
     // int s = (i >> 31)*2 - 1;
@@ -129,7 +129,7 @@ sig_t osc_sqr(pha_t t) {
 
 // Computes a phase that switches from frequency f0 to f0 + df
 // over the duration d, and maintains the final frequency.
-pha_t pha_lerp(float t, float f0, float df, float d) {
+float pha_lerp(float t, float f0, float df, float d) {
     float m = t < d ? t : d;
     #ifdef FREQ_AS_PULSE
     return f0*t + df*(m*m/(2.f*d) + t - m);

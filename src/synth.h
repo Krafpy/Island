@@ -26,14 +26,9 @@
 #define PULSE_C0 (TWO_PI*FREQ_C0)
 
 
-// types to make it clearer what type of signal the
-// following functions return and expect.
-typedef float sig_t;
-typedef float pha_t;
-
 float envelope(float t, float a, float s, float r);
-sig_t osc_tri(pha_t t);
-sig_t osc_saw(pha_t t);
-sig_t osc_sqr(pha_t t);
-pha_t pha_lerp(float t, float f0, float df, float d);
+float osc_tri(float t);
+float osc_saw(float t);
+float osc_sqr(float t);
+float pha_lerp(float t, float f0, float df, float d);
 float sequence(float t, char* notes, int l, float d);

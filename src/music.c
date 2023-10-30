@@ -21,13 +21,14 @@ void music_init(WAVFile* music) {
         float nt = fmodf(t, BEAT_DURATION);
 
         float fc = sequence(t, notes, N_NOTES(notes), BEAT_DURATION);
-        sig_t s = osc_tri(fc*t);
-        s *= envelope(nt,
-                      0.1f*BEAT_DURATION,
-                      0.1f*BEAT_DURATION,
-                      0.5f*BEAT_DURATION);
+        float sig = osc_tri(fc*t);
+        sig *= envelope(nt,
+                        0.1f*BEAT_DURATION,
+                        0.1f*BEAT_DURATION,
+                        0.5f*BEAT_DURATION
+                    );
 
-        short amp = (short)(s*MAX_AMPLITUDE);
+        short amp = (short)(sig*MAX_AMPLITUDE);
         buffer[2*i+0] = amp; // left channel
         buffer[2*i+1] = amp; // right channel
     }
