@@ -16,7 +16,7 @@ static const PIXELFORMATDESCRIPTOR pfd = {
     .cStencilBits = 8
 };
 
-static WAVHeader header = {
+static const WAVHeader header = {
     .riffHeader = 0x46464952, // little-endian "RIFF"
     .wavSize = sizeof(WAVHeader) + DATA_BYTES - sizeof(char[8]),
     .waveHeader = 0x45564157, // little-endian "WAVE"
