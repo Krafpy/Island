@@ -8,25 +8,27 @@
 #define MAX_AMPLITUDE (32767.0f/4.f) // must be less or equal than 32767
 
 #define N_NOTES(notes) (sizeof(notes)/sizeof(char))
+#define BEAT_DURATION (60.f/(float)MUSIC_BPM)
 
-static char notes[] = {
-    C(3), G(3), F(3), G(3)
-};
+static char notes[] = {C(3), G(3), F(3), G(3)};
 
 void music_init(WAVFile* music) {
     short* buffer = (short*)music->buffer;
+
     // Generate the music's audio signal
     for(unsigned int i = 0; i < NUM_SAMPLES; i++) {
         float t = (float)i/(float)SAMPLE_RATE;
-        
-        float nd = ((float)MUSIC_DURATION)/(4.f*(float)N_NOTES(notes));
-        float tn = fmodf(t, nd);
+        float nt = fmodf(t, BEAT_DURATION);
 
-        float fc = sequence(t, notes, N_NOTES(notes), nd);
+        float fc = sequence(t, notes, N_NOTES(notes), BEAT_DURATION);
         sig_t s = osc_tri(fc*t);
-        s *= envelope(tn, 0.1f*nd, 0.1f*nd, 0.8f*nd);
+        s *= envelope(nt,
+                      0.1f*BEAT_DURATION,
+                      0.1f*BEAT_DURATION,
+                      0.5f*BEAT_DURATION);
 
-        buffer[2*i+0] = (short)(s*MAX_AMPLITUDE); // left channel
-        buffer[2*i+1] = (short)(s*MAX_AMPLITUDE); // right channel
+        short amp = (short)(s*MAX_AMPLITUDE);
+        buffer[2*i+0] = amp; // left channel
+        buffer[2*i+1] = amp; // right channel
     }
 }
