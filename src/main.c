@@ -1,28 +1,43 @@
 #include <windows.h>
 #include <GL/gl.h>
+#include <memory.h>
 #include "intro.h"
 #include "music.h"
 #include "config.h"
 
-LRESULT CALLBACK WindowProc(
-    HWND hwnd, // the handle to the window that receives the message
-    UINT uMsg, // the message code
-    // additional data, depends on the message code
-    WPARAM wParam,
-    LPARAM lParam
-) {
-    switch(uMsg){
-        case WM_CLOSE:
-        case WM_KEYDOWN:
-            PBOOL pDone = (PBOOL)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-            *pDone = TRUE;
-            PostQuitMessage(0);
-            break;
-        default:
-            return DefWindowProc(hwnd, uMsg, wParam, lParam);
-    }
-    return 0;
-}
+
+static const PIXELFORMATDESCRIPTOR pfd = {
+    .nSize = sizeof(PIXELFORMATDESCRIPTOR),
+    .nVersion = 1,
+    .dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
+    .iPixelType = PFD_TYPE_RGBA,
+    .cColorBits = 32,
+    .cDepthBits = 24,
+    .cStencilBits = 8
+};
+
+static WAVHeader header = {
+    .riffHeader = 0x46464952, // little-endian "RIFF"
+    .wavSize = sizeof(WAVHeader) + DATA_BYTES - sizeof(char[8]),
+    .waveHeader = 0x45564157, // little-endian "WAVE"
+
+    .fmtHeader = 0x20746D66, // little-endian "fmt "
+    .fmtChunkSize = 16,
+    .audioFormat = 1,
+    .numChannels = NUM_CHANNELS,
+    .sampleRate = SAMPLE_RATE,
+    .byteRate = BYTE_RATE,
+    .sampleAlignment = SAMPLE_ALIGNMENT,
+    .bitDepth = BIT_DEPTH,
+    
+    .dataHeader = 0x61746164, // little-endian "data"
+    .dataBytes = DATA_BYTES
+};
+
+static WAVFile music;
+
+
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 int WINAPI wWinMain(
     HINSTANCE hInstance, // handle to the currently loaded executable
@@ -69,47 +84,33 @@ int WINAPI wWinMain(
         return 0;
     }
 
+    // Get the window's handle to a device context. A device context
+    // is a data structure that represents a surface.
+    HDC hdc = GetDC(hwnd);
+    // attempts to match an appropriate pixel format supported by a device
+    // context to a given pixel format specification.
+    int pixelFormat = ChoosePixelFormat(hdc, &pfd);
+    // sets the pixel format of the specified device context
+    SetPixelFormat(hdc, pixelFormat, &pfd);
+    // Initialize an OpenGL context for this device context
+    HGLRC hglrc = wglCreateContext(hdc);
+    wglMakeCurrent(hdc, hglrc);
+
     // Initialize the music file in memory
-    WAVFile* music = music_init();
+    memcpy(&music, &header, sizeof(WAVHeader));
+    music_init(&music);
+    // Initialize the intro's rendering pipeline
+    intro_init(hwnd);
+
     // Play the sound file directly from memory, asynchronously for the
     // music to play in background
-    if(!sndPlaySound((const char*)music, SND_ASYNC | SND_MEMORY)) {
+    if(!sndPlaySound((const char*)&music, SND_ASYNC | SND_MEMORY)) {
         #ifdef DEBUG
         MessageBox(hwnd, "Failed to play sound", "Error", MB_OK);
         #endif
         ExitProcess(0);
         return 0;
     }
-
-    // Get the window's handle to a device context. A device context
-    // is a data structure that represents a surface.
-    HDC hdc = GetDC(hwnd);
-
-    // Initialize the device context
-    // the pixel format descriptor describes the pixel format of a device
-    // context
-    PIXELFORMATDESCRIPTOR pfd = {0};
-
-    pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
-    pfd.nVersion = 1;
-    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-    pfd.iPixelType = PFD_TYPE_RGBA;
-    pfd.cColorBits = 32;
-    pfd.cDepthBits = 24;
-    pfd.cStencilBits = 8;
-
-    // attempts to match an appropriate pixel format supported by a device
-    // context to a given pixel format specification.
-    int pixelFormat = ChoosePixelFormat(hdc, &pfd);
-    // sets the pixel format of the specified device context
-    SetPixelFormat(hdc, pixelFormat, &pfd);
-
-    // Initialize an OpenGL context for this device context
-    HGLRC hglrc = wglCreateContext(hdc);
-    wglMakeCurrent(hdc, hglrc);
-
-    // Run the intro initialization
-    intro_init(hwnd);
 
     // Main window loop
     DWORD startTime = timeGetTime(), elapsedTime = 0;
@@ -148,3 +149,25 @@ int WINAPI wWinMain(
     ExitProcess(0);
     return 0;
 }
+
+#ifdef DEBUG
+LRESULT CALLBACK WindowProc(
+    HWND hwnd, // the handle to the window that receives the message
+    UINT uMsg, // the message code
+    // additional data, depends on the message code
+    WPARAM wParam,
+    LPARAM lParam
+) {
+    switch(uMsg){
+        case WM_CLOSE:
+        case WM_KEYDOWN:
+            PBOOL pDone = (PBOOL)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+            *pDone = TRUE;
+            PostQuitMessage(0);
+            break;
+        default:
+            return DefWindowProc(hwnd, uMsg, wParam, lParam);
+    }
+    return 0;
+}
+#endif
