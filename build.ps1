@@ -10,15 +10,15 @@ $buildDir = 'obj' # Output directory of object files
 $disasmDir = 'dis' # Output directory of disasembled files
 
 $compileOptions = @(
-    '/c', '/O1', '/Os', '/Oi', # basic optimization
-    '/arch:IA32', # force to use x87 float instructions
-    '/fp:fast', # allow reordering of float operations
+    '/c', '/O1', '/Os', '/Oi', # Basic optimization
+    '/arch:IA32', # Force to use x87 float instructions
+    '/fp:fast', # Allow reordering of float operations
     ('/Fo"{0}\\"' -f $buildDir) # Output directory
 )
 if($release) {
-    $compileOptions += '/GS-'
+    $compileOptions += '/GS-' # No buffer security check
 } else {
-    $compileOptions += '/DDEBUG'
+    $compileOptions += '/DDEBUG' # Keep debug code when not in release
 }
 
 $srcFiles = Get-ChildItem -Path $sourceDir -Filter "*.c" -Recurse `
