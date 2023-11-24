@@ -13,13 +13,14 @@ For complete beginners to demoscene, check out this article on how to
 
 This template itself contains a very simple example intro that
 can be built and run directly. Of course when designing a real demo, you will want adapt,
-inline some of the code here in addition to writing your own (possibly in assembly).
+inline, rewrite or remove some of the code here in addition to writing your own
+(possibly in assembly).
 
 ## File structure
 
 - `main.c`: entrypoint, creates the window and starts the music and rendering loop;
 - `config.h`: global settings;
-- `glext.h` and `khrplatform.h`: self-contained interfaces for OpenGL functions;
+- `glext.h` and `khrplatform.h`: self-contained interfaces of OpenGL functions;
 - `fp.h`: useful set of approximate floats (by iq);
 - `intro.h`/`intro.c`: rendering initialisation and update;
 - `shader.inl`: the shaders' sources;
@@ -28,39 +29,49 @@ inline some of the code here in addition to writing your own (possibly in assemb
 
 ## Build
 
-The compilation tricks to generate a small executable follows the recommandations described
-by [in this article by iq](https://iquilezles.org/articles/compilingsmall/).
-Building the project requires the following tools to be installed and accessible via a powershell
-command line:
+The compilation tricks to generate a small executable follow the recommandations described
+in [this article by iq](https://iquilezles.org/articles/compilingsmall/) with some updates,
+and are detailed in the `build.ps1` script.
 
-- Microsoft Visual Studio's build tools `cl.exe`, `link.exe`
-(e.g. using the Powershell Developer Command Prompt)
+Building the project requires the following tools to be installed and accessible via a
+PowerShell command line:
+
+- Microsoft Visual C++ compiler `cl.exe` and linker `link.exe`
+(e.g. using the Powershell Developer Command Prompt). These are bundled in the the
+[Build Tools for Visual Studio](https://visualstudio.microsoft.com/downloads/?q=build+tools+for+visual+studio)
+(note that you don't need to install Visual Studio itself).
 - [`crinkler`](https://github.com/runestubbe/Crinkler) (e.g. in PATH)
 
 If you are using an antivirus software it is likely to detect the compiled executable as
-a trojan. You'll need to whitelist the file or the entire folder in your antivirus before running it
-(or even before compiling it).
+a [trojan](https://en.wikipedia.org/wiki/Trojan_horse_(computing)).
+You'll need to whitelist the file or the entire folder in your antivirus before compiling or running it.
 
 Build an uncompressed debug version (uses MSVC's linker):
 
-```bash
+```powershell
 .\build.ps1
 ```
 
 Or build a debug compressed executable (uses crinkler)
 
-```bash
+```powershell
 .\build.ps1 -tiny
 ```
 
 Or the compressed release:
 
-```bash
+```powershell
 .\build.ps1 -release
 ```
 
 And run:
 
-```bash
+```powershell
 .\main.exe
+```
+
+You can also specify the name of the output file:
+
+```powershell
+.\build.ps1 -release demo.exe
 ```
