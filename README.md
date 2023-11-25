@@ -12,7 +12,7 @@ For complete beginners to demoscene, check out this article on how to
 [*Teach Yourself Demoscene in 14 Days*](https://github.com/psenough/teach_yourself_demoscene_in_14_days).
 
 This template itself contains a very simple example intro that
-can be built and run directly. Of course when designing a real demo, you will want adapt,
+can be built and run directly. Of course, when designing a real demo, you will want adapt,
 inline, rewrite or remove some of the code here in addition to writing your own
 (possibly in assembly).
 
@@ -20,7 +20,7 @@ inline, rewrite or remove some of the code here in addition to writing your own
 
 - `main.c`: entrypoint, creates the window and starts the music and rendering loop;
 - `config.h`: global settings;
-- `glext.h` and `khrplatform.h`: self-contained interfaces of OpenGL functions;
+- `glext.h`, `khrplatform.h`: self-contained interfaces of OpenGL functions;
 - `fp.h`: useful set of approximate floats (by iq);
 - `intro.h`/`intro.c`: rendering initialisation and update;
 - `shader.inl`: the shaders' sources;
@@ -30,7 +30,7 @@ inline, rewrite or remove some of the code here in addition to writing your own
 ## Build
 
 The compilation tricks to generate a small executable follow the recommandations described
-in [this article by iq](https://iquilezles.org/articles/compilingsmall/) with some updates,
+in [this article by iq](https://iquilezles.org/articles/compilingsmall/), with some updates,
 and are detailed in the `build.ps1` script.
 
 Building the project requires the following tools to be installed and accessible via a
