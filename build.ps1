@@ -2,7 +2,8 @@ param (
     [switch]$tiny = $false,
     [switch]$release = $false,
     [string]$out = "main.exe",
-    [switch]$disasm = $false
+    [switch]$disasm = $false,
+    [switch]$nosound = $false
 )
 
 $sourceDir = 'src' # Source files directory
@@ -19,6 +20,9 @@ if($release) {
     $compileOptions += '/GS-' # No buffer security check
 } else {
     $compileOptions += '/DDEBUG' # Keep debug code when not in release
+}
+if($nosound) {
+    $compileOptions += '/DNO_SOUND' # Optionally remove sound
 }
 
 $srcFiles = Get-ChildItem -Path $sourceDir -Filter "*.c" -Recurse `

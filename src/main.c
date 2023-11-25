@@ -96,12 +96,13 @@ int WINAPI wWinMain(
     HGLRC hglrc = wglCreateContext(hdc);
     wglMakeCurrent(hdc, hglrc);
 
+    // Initialize the intro's rendering pipeline
+    intro_init(hwnd);
+    
+    #ifndef NO_SOUND
     // Initialize the music file in memory
     memcpy(&music, &header, sizeof(WAVHeader));
     music_init(&music);
-    // Initialize the intro's rendering pipeline
-    intro_init(hwnd);
-
     // Play the sound file directly from memory, asynchronously for the
     // music to play in background
     if(!sndPlaySound((const char*)&music, SND_ASYNC | SND_MEMORY)) {
@@ -111,6 +112,7 @@ int WINAPI wWinMain(
         ExitProcess(0);
         return 0;
     }
+    #endif
 
     // Main window loop
     DWORD startTime = timeGetTime(), elapsedTime = 0;
