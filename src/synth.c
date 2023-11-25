@@ -67,8 +67,7 @@ float envelope(float t, float a, float s, float r) {
         fsubp st(1), st     // 1-(t-a-s)/r - |t/a - (1-(t-a-s)/r)|, t/a, 2
         faddp st(1), st     // t/a + 1-(t-a-s)/r - |t/a - (1-(t-a-s)/r)|, 2
         fdiv st, st(1)      // (t/a + 1-(t-a-s)/r - |t/a - (1-(t-a-s)/r)|) / 2, 2
-                            // |-------- x = min(t/a, 1-(t-a-s)/r) -----------|
-                            // x, 2
+                            // x = min(t/a, 1-(t-a-s)/r), 2
         fld1                // 1, x, 2
         fld st(1)           // x, 1, x, 2
         fsub st, st(1)      // x-1, 1, x, 2
