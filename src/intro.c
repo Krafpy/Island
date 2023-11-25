@@ -6,7 +6,7 @@
 
 // Define the modern OpenGL functions to load from the driver
 
-static char* glFuncNames[] = {
+static const char* glFuncNames[] = {
     "glCreateShaderProgramv",
     "glUseProgram",
     "glProgramUniform4fv",
@@ -16,11 +16,7 @@ static char* glFuncNames[] = {
     #endif
 };
 
-#ifdef DEBUG
-    #define N_GL_FUNCS 5
-#else
-    #define N_GL_FUNCS 3
-#endif
+#define N_GL_FUNCS (sizeof(glFuncNames)/sizeof(char*))
 
 static void* glFuncs[N_GL_FUNCS];
 
