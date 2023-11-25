@@ -52,26 +52,20 @@ Build an uncompressed debug version (uses MSVC's linker):
 .\build.ps1
 ```
 
-Or build a debug compressed executable (uses crinkler)
-
-```powershell
-.\build.ps1 -tiny
-```
-
-Or the compressed release:
+or the compressed release (uses crinkler):
 
 ```powershell
 .\build.ps1 -release
 ```
 
-And run:
+and run:
 
 ```powershell
 .\main.exe
 ```
 
-You can also specify the name of the output file:
+To see all the build options enter:
 
 ```powershell
-.\build.ps1 -release demo.exe
+.\build.ps1 -help
 ```
