@@ -2,6 +2,7 @@ param (
     [switch]$help = $false,
     [switch]$tiny = $false,
     [switch]$release = $false,
+    [int]$ordertries = 100,
     [switch]$nosound = $false,
     [switch]$disasm = $false,
     [switch]$noexe = $false,
@@ -16,8 +17,9 @@ if($help) {
     options:
 
     -help: display this text (ignores other options)
-    -tiny: compile tiny with debug information
+    -tiny: compile tiny (uses crinkler)
     -release: compile tiny in release mode
+    -ordertries: crinkler's /ORDERTRIES option (release mode only) (default: 100)
     -nosound: don't generate nor play sound
     -disasm: disassemble compiled object files
     -noexe: don't produce (link) an executable
@@ -38,10 +40,10 @@ $compileOptions = @(
     ('/Fo"{0}\\"' -f $buildDir) # Output directory
 )
 
-if($release) {
+if($tiny -or $release) {
     $compileOptions += '/GS-' # No buffer security check
 } else {
-    $compileOptions += '/DDEBUG' # Keep debug code when not in release
+    $compileOptions += '/DDEBUG' # Keep debug code when not in tiny mode
 }
 if($nosound) {
     $compileOptions += '/DNO_SOUND' # Optionally remove sound
@@ -63,10 +65,17 @@ if(-not $noexe) {
     # Link
     if ($tiny -or $release) {
         Write-Output "Linking with crinkler"
+        if($release) {
+            $extraOptions = @(
+                "/COMPMODE:SLOW",
+                "/ORDERTRIES:$ordertries"
+            )
+        }
         crinkler /OUT:$out `
                 /SUBSYSTEM:WINDOWS `
                 /ENTRY:wWinMain `
                 /TINYHEADER `
+                $extraOptions `
                 $objFiles `
                 kernel32.lib user32.lib gdi32.lib opengl32.lib bufferoverflowu.lib Winmm.lib
 
