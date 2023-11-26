@@ -23,7 +23,6 @@ static void* glFuncs[N_GL_FUNCS];
 #define glCreateShaderProgramv ((PFNGLCREATESHADERPROGRAMVPROC)glFuncs[0])
 #define glUseProgram ((PFNGLUSEPROGRAMPROC)glFuncs[1])
 #define glProgramUniform4fv ((PFNGLPROGRAMUNIFORM4FVPROC)glFuncs[2])
-
 #ifdef DEBUG
 #define glGetProgramiv ((PFNGLGETPROGRAMIVPROC)glFuncs[3])
 #define glGetProgramInfoLog ((PFNGLGETPROGRAMINFOLOGPROC)glFuncs[4])
@@ -56,6 +55,7 @@ void intro_init(HWND hwnd) {
 }
 
 
+// Paramaters to pass to the fragment shader at each frame as an array of vec4s
 static GLfloat params[4*1] = {(float)X_RES, (float)Y_RES, 0.f, 0.f};
 
 void intro_do(GLfloat time) {
