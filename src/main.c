@@ -70,7 +70,7 @@ int WINAPI wWinMain(
         // menu, minimize and maximize buttons
         WS_OVERLAPPEDWINDOW | WS_VISIBLE,
         // xy-position, height and width of the window, set to default
-        100, 100, X_RES, Y_RES,
+        0, 0, X_RES, Y_RES,
         NULL, // parent window, NULL for a top level window
         NULL, // define a menu for the window, NULL for none
         hInstance, // the handle to this executable
