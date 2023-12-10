@@ -4,6 +4,7 @@ param (
     [switch]$release = $false,
     [int]$ordertries = 100,
     [switch]$nosound = $false,
+    [switch]$nofullscreen = $false,
     [switch]$disasm = $false,
     [switch]$noexe = $false,
     [string]$out = "main.exe"
@@ -21,6 +22,7 @@ if($help) {
     -release: compile tiny in release mode
     -ordertries: crinkler's /ORDERTRIES option (release mode only) (default: 100)
     -nosound: don't generate nor play sound
+    -nofullscreen: open a framed window instead of fullscreen in release
     -disasm: disassemble compiled object files
     -noexe: don't produce (link) an executable
     out: output file name (default: main.exe)
@@ -44,9 +46,13 @@ if($tiny -or $release) {
     $compileOptions += '/GS-' # No buffer security check
 } else {
     $compileOptions += '/DDEBUG' # Keep debug code when not in tiny mode
+    $nofullscreen = $true # No fullscreen in debug mode
 }
 if($nosound) {
     $compileOptions += '/DNO_SOUND' # Optionally remove sound
+}
+if($nofullscreen) {
+    $compileOptions += '/DNO_FULLSCREEN'
 }
 
 $srcFiles = Get-ChildItem -Path $sourceDir -Filter "*.c" -Recurse `

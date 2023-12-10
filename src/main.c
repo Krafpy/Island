@@ -36,6 +36,8 @@ static const WAVHeader header = {
 
 static WAVFile music;
 
+static DEVMODE displaySettings;
+
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -45,6 +47,19 @@ int WINAPI wWinMain(
     PWSTR pCmdLine, // command line arguments as Unicode string
     int nCmdShow // flag indicating if the current app's window is minimized, maximised or shown normally
 ) {
+    #ifndef NO_FULLSCREEN
+    // Change display settings to fullscreen
+    EnumDisplaySettings(NULL, 0, &displaySettings);
+    displaySettings.dmPelsWidth  = X_RES;
+    displaySettings.dmPelsHeight = Y_RES;
+    displaySettings.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
+    if(ChangeDisplaySettings(&displaySettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL) {
+        ExitProcess(0);
+        return 0;
+    }
+    ShowCursor(FALSE);
+    #endif
+
     #ifdef DEBUG
     // Register the window class
     // The window class defines common data and behaviour of a window, and is
@@ -62,6 +77,7 @@ int WINAPI wWinMain(
     const LPCSTR CLASS_NAME = "static";
     #endif
 
+    #ifdef NO_FULLSCREEN
     HWND hwnd = CreateWindow(
         CLASS_NAME, // the name of the window class to use for this window
         "", // the title of the window
@@ -77,6 +93,16 @@ int WINAPI wWinMain(
         // a pointer to arbitrary data of type void*, here it's not used
         NULL
     );
+    #else
+    HWND hwnd = CreateWindow(
+        CLASS_NAME,
+        "",
+        WS_POPUP | WS_VISIBLE, // unframed window (for fullscreen)
+        0, 0, X_RES, Y_RES,
+        NULL, NULL, hInstance,
+        NULL
+    );
+    #endif
     
     if (hwnd == NULL) {
         ExitProcess(0);
@@ -146,6 +172,12 @@ int WINAPI wWinMain(
     
     // Stop any remaining sound from playing
     sndPlaySound(NULL, 0);
+
+    #ifndef NO_FULLSCREEN
+    // Back to default display settings
+    ChangeDisplaySettings(NULL, 0);
+    ShowCursor(TRUE);
+    #endif
 
     ExitProcess(0);
     return 0;
