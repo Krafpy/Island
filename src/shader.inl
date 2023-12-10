@@ -43,6 +43,7 @@ static const char* fragShaderSource = \
     "float a = 1.5*params.z;"
     "p.xz *= rot(a);"
     "p.yx *= rot(a);"
+    "p.zy *= rot(a);"
     "float db = dBox(p, vec3(0.5)) - 0.03;"
     "return db;"
 "}"
