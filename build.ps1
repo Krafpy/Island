@@ -34,6 +34,15 @@ $sourceDir = 'src' # Source files directory
 $buildDir = 'obj' # Output directory of object files
 $disasmDir = 'dis' # Output directory of disasembled files
 
+# Check if MSVC build tools are accessible
+try {
+    Get-Command "cl" -ErrorAction Stop
+    Get-Command "link" -ErrorAction Stop
+} catch {
+    Write-Error "MSVC Build Tools cl.exe or link.exe not found."
+    return
+}
+
 $compileOptions = @(
     '/c', # Compile without linking (generate object files only)
     '/O1', '/Os', '/Oi', # Basic optimization
