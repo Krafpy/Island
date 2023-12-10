@@ -62,8 +62,7 @@ int WINAPI wWinMain(
     const LPCSTR CLASS_NAME = "static";
     #endif
 
-    HWND hwnd = CreateWindowEx(
-        0, // optional window behaviour flags, 0 = default behaviour
+    HWND hwnd = CreateWindow(
         CLASS_NAME, // the name of the window class to use for this window
         "", // the title of the window
         // set of flags to describe the look and feel of the window,
