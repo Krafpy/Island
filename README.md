@@ -5,8 +5,8 @@ This is an example minimal template for building 4kB intros on Windows
 [Inigo Quilez's (iq) templates](https://madethisthing.com/iq/Demo-Framework-4k)
 for 4k shader-based intros, but with a more explicit
 writing and lots of comments so that the code appears more user-friendly to
-beginners. This project requires doesn't rely on Visual Studio (only the
-Build Tools) to demonstrate the details of the compilation.
+beginners. This project doesn't rely on Visual Studio (only the
+Build Tools), to demonstrate the details of the compilation.
 The rendering and music generation is mostly based on iq's example,
 but the synthetizer is custom made.
 
