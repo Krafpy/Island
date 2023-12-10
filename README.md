@@ -16,7 +16,8 @@ For complete beginners to demoscene, check out this article on how to
 This template itself contains a very simple example intro that
 can be built and run directly. Of course, when designing a real demo, you will want adapt,
 inline, rewrite or remove some of the code here in addition to writing your own
-(possibly in assembly).
+(possibly in assembly). For the shader files, you probably would want to use
+[Shader Minifier](https://github.com/laurentlb/Shader_Minifier).
 
 ## File structure
 
