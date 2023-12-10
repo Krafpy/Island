@@ -36,8 +36,8 @@ $disasmDir = 'dis' # Output directory of disasembled files
 
 # Check if MSVC build tools are accessible
 try {
-    Get-Command "cl" -ErrorAction Stop
-    Get-Command "link" -ErrorAction Stop
+    Get-Command "cl" -ErrorAction Stop | Out-Null
+    Get-Command "link" -ErrorAction Stop | Out-Null
 } catch {
     Write-Error "MSVC Build Tools cl.exe or link.exe not found."
     return
