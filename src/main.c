@@ -80,7 +80,7 @@ int WINAPI wWinMain(
     #ifdef NO_FULLSCREEN
     HWND hwnd = CreateWindow(
         CLASS_NAME, // the name of the window class to use for this window
-        "", // the title of the window
+        0, // the title of the window
         // set of flags to describe the look and feel of the window,
         // this is the default combination of flags that set a title bar, border,
         // menu, minimize and maximize buttons
@@ -96,7 +96,7 @@ int WINAPI wWinMain(
     #else
     HWND hwnd = CreateWindow(
         CLASS_NAME,
-        "",
+        0,
         WS_POPUP | WS_VISIBLE, // unframed window (for fullscreen)
         0, 0, X_RES, Y_RES,
         NULL, NULL, hInstance,
