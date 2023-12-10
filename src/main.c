@@ -16,7 +16,7 @@ static const PIXELFORMATDESCRIPTOR pfd = {
     .cStencilBits = 8
 };
 
-static const WAVHeader header = {
+static const WAVHeader wavHeader = {
     .riffHeader = 0x46464952, // little-endian "RIFF"
     .wavSize = sizeof(WAVHeader) + DATA_BYTES - sizeof(char[8]),
     .waveHeader = 0x45564157, // little-endian "WAVE"
@@ -126,7 +126,7 @@ int WINAPI wWinMain(
     
     #ifndef NO_SOUND
     // Initialize the music file in memory
-    memcpy(&music, &header, sizeof(WAVHeader));
+    memcpy(&music, &wavHeader, sizeof(WAVHeader));
     music_init(&music);
     // Play the sound file directly from memory, asynchronously for the
     // music to play in background
