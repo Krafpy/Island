@@ -1,7 +1,7 @@
 #include <windows.h>
 #include <GL/gl.h>
 #include "glext.h" // contains type definitions for all modern OpenGL functions
-#include "shader.inl"
+#include "shaders.inl"
 #include "config.h"
 
 // Define the modern OpenGL functions to load from the driver
