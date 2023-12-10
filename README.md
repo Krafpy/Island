@@ -38,7 +38,7 @@ and are detailed in the `build.ps1` script.
 Building the project requires the following tools to be installed and accessible via a
 PowerShell command line:
 
-- Microsoft Visual C++ compiler `cl.exe` and linker `link.exe`
+- Microsoft Visual C++ compiler `cl.exe` and linker `link.exe` for x86
 (e.g. using the Powershell Developer Command Prompt). These are bundled in the the
 [Build Tools for Visual Studio](https://visualstudio.microsoft.com/downloads/?q=build+tools+for+visual+studio)
 (note that you don't need to install Visual Studio itself).
