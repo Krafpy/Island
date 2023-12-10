@@ -1,7 +1,7 @@
 # 4k intro template
 
-This is an example minimal template for building 4kB intros on Windows
-(but can apply to larger ones as well). It is highly inspired by
+This is an example minimal template for building 4kB [intros](https://en.wikipedia.org/wiki/Demoscene)
+on Windows (but can apply to larger ones as well). It is highly inspired by
 [Inigo Quilez's (iq) templates](https://madethisthing.com/iq/Demo-Framework-4k)
 for 4k shader-based intros, but with a more explicit
 writing and lots of comments so that the code appears more user-friendly to
