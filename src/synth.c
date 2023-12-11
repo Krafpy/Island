@@ -119,11 +119,18 @@ float osc_saw(float t) {
 
 // Square wave oscillator
 float osc_sqr(float t) {
-    float y = sinf(t);
-    int i = *(int*)&y;
-    // int s = (i >> 31)*2 - 1;
-    int s = ((i >> 30) & 2) - 1;
-    return (float)s;
+    union {
+        float f;
+        int i;
+    } y;
+    y.f = sinf(t);
+    y.i &= 0x80000000;
+    y.i |= 0x3F800000;
+    return y.f;
+    // float y = sinf(t);
+    // int i = *(int*)&y;
+    // int s = ((i >> 30) & 2) - 1;
+    // return (float)s;
 }
 
 // Computes a phase that switches from frequency f0 to f0 + df
