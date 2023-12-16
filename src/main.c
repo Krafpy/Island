@@ -50,8 +50,8 @@ int WINAPI wWinMain(
     #ifndef NO_FULLSCREEN
     // Change display settings to fullscreen
     EnumDisplaySettings(NULL, 0, &displaySettings);
-    displaySettings.dmPelsWidth  = X_RES;
-    displaySettings.dmPelsHeight = Y_RES;
+    displaySettings.dmPelsWidth  = XRES;
+    displaySettings.dmPelsHeight = YRES;
     displaySettings.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
     if(ChangeDisplaySettings(&displaySettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL) {
         ExitProcess(0);
@@ -86,7 +86,7 @@ int WINAPI wWinMain(
         // menu, minimize and maximize buttons
         WS_OVERLAPPEDWINDOW | WS_VISIBLE,
         // xy-position, height and width of the window, set to default
-        0, 0, X_RES, Y_RES,
+        0, 0, XRES, YRES,
         NULL, // parent window, NULL for a top level window
         NULL, // define a menu for the window, NULL for none
         hInstance, // the handle to this executable
@@ -98,7 +98,7 @@ int WINAPI wWinMain(
         CLASS_NAME,
         0,
         WS_POPUP | WS_VISIBLE, // unframed window (for fullscreen)
-        0, 0, X_RES, Y_RES,
+        0, 0, XRES, YRES,
         NULL, NULL, hInstance,
         NULL
     );

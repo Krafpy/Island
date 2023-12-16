@@ -56,7 +56,7 @@ void intro_init(HWND hwnd) {
 
 
 // Paramaters to pass to the fragment shader at each frame as an array of vec4s
-static GLfloat params[4*1] = {(float)X_RES, (float)Y_RES, 0.f, 0.f};
+static GLfloat params[4*1] = {(float)XRES, (float)YRES, 0.f, 0.f};
 
 void intro_do(GLfloat time) {
     params[2] = time;
