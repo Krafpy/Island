@@ -1,12 +1,13 @@
 # 4k intro template
 
-This is an example minimal template for building 4kB [intros](https://en.wikipedia.org/wiki/Demoscene)
-on Windows (but can apply to larger ones as well). It is highly inspired by
+This is a (yet another) example minimal template for building 4kB
+[intros](https://en.wikipedia.org/wiki/Demoscene) on Windows (but can apply
+to larger ones as well). It was initially inspired by
 [Inigo Quilez's (iq) templates](https://madethisthing.com/iq/Demo-Framework-4k)
 for 4k shader-based intros, but with a more explicit
-writing and lots of comments so that the code appears more user-friendly to
-beginners. This project doesn't rely on Visual Studio (only the
-Build Tools), to demonstrate the details of the compilation.
+code and lots of comments in order to appear more beginner-friendly.
+This template relies on native tools and Visual Studio Build Tools only,
+to demonstrate the details of the compilation.
 The rendering and music generation is mostly based on iq's example,
 but the synthetizer is custom made.
 
@@ -59,7 +60,7 @@ Build an uncompressed debug version (uses MSVC's linker):
 or the compressed release (uses crinkler):
 
 ```powershell
-.\build.ps1 -release
+.\build.ps1 .\release.json
 ```
 
 and run:
@@ -71,5 +72,5 @@ and run:
 To see all the build options enter:
 
 ```powershell
-.\build.ps1 -help
+Get-Help .\build.ps1
 ```

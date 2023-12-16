@@ -1,0 +1,9 @@
+{
+    "DebugMode": true,
+    "Tiny": false,
+    "Fullscreen": false,
+    "Sound": true,
+    "XRes": 640,
+    "YRes": 480,
+    "OutName": "main"
+}
