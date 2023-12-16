@@ -11,6 +11,7 @@ param (
     [string]$OutName = $defaults.OutName,
 
     [switch]$NoExe,
+    [switch]$Recompile,
     [switch]$Disasm,
     [switch]$SuffixWithRes,
     [int]$CrinklerTries = 0
@@ -72,9 +73,88 @@ if (-not (Test-Path -Path $buildDir)) {
     mkdir $buildDir
 }
 
+
 # Compile
-Write-Host "Compile options: $compileOptions"
-cl $compileOptions $sourceFiles
+# Basic incremental build implementation
+
+function FindDependencies($fullFilePath) {
+    $paths = @{}
+    $ignore = @("glext.h", "khrplatform.h")
+
+    function RecurseDependencies($fullFilePath) {
+        $parentPath = Split-Path $fullFilePath -Parent
+        $fileContent = Get-Content $fullFilePath
+        $includePattern = '^\s*#include\s+"([^"]+)"'
+
+        foreach ($line in $fileContent) {
+            if ($line -match $includePattern) {
+                $includedFilePath = $Matches[1]
+                $fullIncludePath = Resolve-Path "$parentPath/$includedFilePath"
+                $fullIncludePath = $fullIncludePath.ToString()
+
+                $includedFile = Split-Path $fullIncludePath -Leaf
+                if($includedFile -in $ignore) {
+                    continue
+                }
+                
+                if(-not $paths.ContainsKey($fullIncludePath)) {
+                    $paths[$fullIncludePath] = $true
+                    RecurseDependencies $fullIncludePath
+                }
+            }
+        }
+    }
+
+    RecurseDependencies $fullFilePath
+    $paths | Select-Object -ExpandProperty Keys
+}
+
+# Compile only the sources that have been modified except if
+# explicitly told to compile all or if compile options changed
+
+$prevOptsPath = "./build.tmp"
+if(-not $Recompile) {
+    if(-not (Test-Path -Path $prevOptsPath)) {
+        $Recompile = $true
+    } else {
+        $cmp = Compare-Object $compileOptions @(Get-Content -Path $prevOptsPath)
+        $Recompile = -not $null -eq $cmp
+    }
+}
+if($Recompile) {
+    $compileOptions | Set-Content -Path $prevOptsPath
+}
+
+$compileSources = @()
+if(-not $Recompile) {
+    foreach($source in $sourceFiles) {
+        $objPath = "$buildDir/$((Get-Item $source).BaseName).obj"
+        if(-not (Test-Path -Path $objPath)) {
+            $compileSources += $source
+            continue
+        }
+    
+        $objWriteTime = (Get-Item $objPath).LastWriteTime
+        $deps = @($source)
+        $deps += FindDependencies (Resolve-Path $source)
+        foreach($depPath in $deps) {
+            $dep = Get-Item $depPath
+            if($dep.LastWriteTime -gt $objWriteTime) {
+                $compileSources += $source
+                break
+            }
+        }
+    }
+} else {
+    $compileSources = $sourceFiles
+}
+
+if($compileSources.count -eq 0) {
+    Write-Host "Up to date. Nothing to compile."
+} else {
+    Write-Host "Compile options: $compileOptions"
+    cl $compileOptions $compileSources
+}
 
 $objectFiles = Get-ChildItem -Path $buildDir -Filter "*.obj" -Recurse `
                 | ForEach-Object {$_.FullName}
@@ -116,7 +196,7 @@ if(-not $NoExe) {
 
 # Optional disassembly for debugging
 if($Disasm) {
-    if(-Not (Test-Path -Path $disasmDir)) {
+    if(-not (Test-Path -Path $disasmDir)) {
         mkdir $disasmDir
     }
     Write-Host "Disassembling generated object files"
