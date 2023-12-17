@@ -26,12 +26,12 @@ inline, rewrite or remove some of the code here in addition to writing your own.
 
 ## File structure
 
+- `shaders/`: the shaders' sources, minified into `shaders.inl` during build;
 - `main.c`: entrypoint, creates the window and starts the music and rendering loop;
 - `config.h`: global settings;
 - `glext.h`, `khrplatform.h`: self-contained interfaces of OpenGL functions;
 - `fp.h`: useful set of approximate floats ([by iq](https://iquilezles.org/articles/float4k/));
 - `intro.h`/`intro.c`: rendering initialisation and update;
-- `shaders.inl`: the shaders' sources;
 - `synth.h`/`synth.c`: functions for the audio synthetizer;
 - `music.h`/`music.c`: music file generation.
 
