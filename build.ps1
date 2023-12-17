@@ -41,6 +41,40 @@ try {
     Write-Error "MSVC Build Tools cl.exe or link.exe not found."
     return
 }
+# Check if Shader Minifirer is available
+try {
+    Get-Command "shader_minifier" -ErrorAction Stop | Out-Null
+} catch {
+    Write-Error "shader_minifier.exe not found."
+    return
+}
+
+# Utility functions to test if a given file needs to be updated based
+# on its dependencies last update
+function ItemNeedsUpdate($itemPath, $dependsPaths) {
+    if(-not (Test-Path -Path $itemPath)) {
+        return $true
+    }
+    $item = Get-Item $itemPath
+    foreach($dependsPath in $dependsPaths) {
+        $depend = Get-Item $dependsPath
+        if($depend.LastWriteTime -gt $item.LastWriteTime) {
+            return $true
+        }
+    }
+}
+
+# Generate the minified shader source, since this operation can
+# take some time we only generate the file if it has been changed
+$shadersDir = "$sourceDir/shaders"
+$shadersIncludeFile = "$sourceDir/shaders.inl"
+$shaderFiles = Get-ChildItem -Path $shadersDir -Recurse `
+                | Where-Object{$_.Extension -match '^.(frag|vert|glsl)$'} `
+                | ForEach-Object {$_.FullName}
+if(ItemNeedsUpdate $shadersIncludeFile $shaderFiles) {
+    Write-Host "Minifying shaders..."
+    shader_minifier $shaderFiles -o $shadersIncludeFile
+}
 
 # Available options:
 # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-options-listed-by-category?view=msvc-170
@@ -117,7 +151,8 @@ if(-not $Recompile) {
     if(-not (Test-Path -Path $prevOptsPath)) {
         $Recompile = $true
     } else {
-        $cmp = Compare-Object $compileOptions @(Get-Content -Path $prevOptsPath)
+        $prevOpts = @(Get-Content -Path $prevOptsPath)
+        $cmp = Compare-Object $compileOptions $prevOpts
         $Recompile = -not $null -eq $cmp
     }
 }
@@ -129,20 +164,10 @@ $compileSources = @()
 if(-not $Recompile) {
     foreach($source in $sourceFiles) {
         $objPath = "$buildDir/$((Get-Item $source).BaseName).obj"
-        if(-not (Test-Path -Path $objPath)) {
+        $depsPaths = @($source)
+        $depsPaths += FindDependencies (Resolve-Path $source)
+        if(ItemNeedsUpdate $objPath $depsPaths) {
             $compileSources += $source
-            continue
-        }
-    
-        $objWriteTime = (Get-Item $objPath).LastWriteTime
-        $deps = @($source)
-        $deps += FindDependencies (Resolve-Path $source)
-        foreach($depPath in $deps) {
-            $dep = Get-Item $depPath
-            if($dep.LastWriteTime -gt $objWriteTime) {
-                $compileSources += $source
-                break
-            }
         }
     }
 } else {

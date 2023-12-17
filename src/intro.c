@@ -39,7 +39,7 @@ void intro_init(HWND hwnd) {
 
     // Create a fragment shader program, the default vertex shader will
     // be used (?)
-    fragShader = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &fragShaderSource);
+    fragShader = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &shader_frag);
     glUseProgram(fragShader);
 
     #ifdef DEBUG

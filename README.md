@@ -7,7 +7,8 @@ to other sizes as well) on Windows, with an emphasis on being
 [Inigo Quilez's (iq) templates](https://madethisthing.com/iq/Demo-Framework-4k)
 for 4k shader-based intros, but with a more explicit
 code and lots of comments. It is a command-line only alternative to existing
-frameworks and only requires Visual Studio Build Tools to be installed. This was
+frameworks and only requires Visual Studio Build Tools and common
+demoscene tools to be installed. This was
 made in order to clearly detail the compilation process without
 MSBuild/Visual Studio's automation. For Visual Studio compatible frameworks,
 you probably want to look into iq's one or
@@ -22,8 +23,6 @@ The rendering and music generation is mostly based on iq's example,
 but the synthetizer is custom made (and probably a bad example).
 Of course, when designing a production demo, you will want adapt,
 inline, rewrite or remove some of the code here in addition to writing your own.
-For the shader files, you probably would want to use
-[Shader Minifier](https://github.com/laurentlb/Shader_Minifier).
 
 ## File structure
 
@@ -45,13 +44,14 @@ custom minimal JSON configuration files. By default, the `debug.json` configurat
 You can add your own for specific configurations.
 
 Building the project requires the following tools to be installed and accessible via a
-PowerShell command line:
+PowerShell command line (e.g. in PATH):
 
 - Microsoft Visual C++ compiler `cl.exe` and linker `link.exe` for x86
 (e.g. using the Powershell Developer Command Prompt). These are bundled in the the
 [Build Tools for Visual Studio](https://visualstudio.microsoft.com/downloads/?q=build+tools+for+visual+studio)
 (note that you don't need to install Visual Studio itself).
-- [`crinkler`](https://github.com/runestubbe/Crinkler) (e.g. in PATH)
+- [`crinkler`](https://github.com/runestubbe/Crinkler)
+- [`shader_minifier`](https://github.com/laurentlb/Shader_Minifier)
 
 If you are using an antivirus software (Windows Defender included),
 it is likely to detect the compiled executable as
