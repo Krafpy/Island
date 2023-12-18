@@ -127,7 +127,7 @@ int WINAPI wWinMain(
     #ifndef NO_SOUND
     // Initialize the music file in memory
     memcpy(&music, &wavHeader, sizeof(WAVHeader));
-    music_init(&music);
+    music_init((short*)&music.buffer);
     // Play the sound file directly from memory, asynchronously for the
     // music to play in background
     if(!sndPlaySound((const char*)&music, SND_ASYNC | SND_MEMORY)) {

@@ -12,9 +12,7 @@
 
 static char notes[] = {C(3), G(3), F(3), G(3)};
 
-void music_init(WAVFile* music) {
-    short* buffer = (short*)music->buffer;
-
+void music_init(short* buffer) {
     // Generate the music's audio signal
     for(unsigned int i = 0; i < NUM_SAMPLES; i++) {
         float t = (float)i/(float)SAMPLE_RATE;

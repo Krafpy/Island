@@ -40,4 +40,4 @@ typedef struct WAVFile {
 } WAVFile;
 
 
-void music_init(WAVFile* music);
+void music_init(short* buffer);
