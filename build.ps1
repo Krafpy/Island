@@ -18,7 +18,7 @@ param (
 )
 
 if ($MyInvocation.BoundParameters['defaults']) {
-    throw "The -defaults parameter is not allowed. Use -ConfigFile to specify the configuration file."
+    throw "The -defaults parameter is not allowed. Use -Config to specify the configuration file."
 }
 
 Write-Host "DebugMode:  $DebugMode"
