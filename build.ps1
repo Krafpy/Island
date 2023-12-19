@@ -65,6 +65,7 @@ function ItemNeedsUpdate($itemPath, $dependsPaths) {
             return $true
         }
     }
+    return $false
 }
 
 # Generate the minified shader source, since this operation can
