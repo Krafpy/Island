@@ -229,7 +229,7 @@ if($Disasm) {
     if(-not (Test-Path -Path $disasmDir)) {
         mkdir $disasmDir | Out-Null
     }
-    Write-Host "Disassembling generated object files"
+    Write-Host "Disassembling generated object files" -ForegroundColor $infoColor
     foreach($objectFile in $objectFiles) {
         $baseName = (Split-Path $objectFile -Leaf).Split('.')[0]
         $outOption = "/OUT:./$disasmDir/$baseName.asm"
