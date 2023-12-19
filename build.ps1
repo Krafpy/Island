@@ -27,11 +27,14 @@ Write-Host "Sound:      $Sound"
 Write-Host "Fullscreen: $Fullscreen"
 Write-Host "XRes:       $XRes"
 Write-Host "YRes:       $YRes"
+Write-Host ""
 
 
 $sourceDir = 'src' # Source files directory
 $buildDir = 'obj' # Output directory of object files
 $disasmDir = 'dis' # Output directory of disasembled files
+
+$infoColor = "Cyan"
 
 # Check if MSVC build tools are accessible
 try {
@@ -72,7 +75,7 @@ $shaderFiles = Get-ChildItem -Path $shadersDir -Recurse `
                 | Where-Object{$_.Extension -match '^.(frag|vert|glsl)$'} `
                 | ForEach-Object {$_.FullName}
 if(ItemNeedsUpdate $shadersIncludeFile $shaderFiles) {
-    Write-Host "Minifying shaders..."
+    Write-Host "Minifying shaders..." -ForegroundColor $infoColor
     shader_minifier $shaderFiles -o $shadersIncludeFile
 }
 
@@ -104,7 +107,7 @@ $sourceFiles = Get-ChildItem -Path $sourceDir -Filter "*.c" -Recurse `
                 | ForEach-Object {$_.FullName}
 
 if (-not (Test-Path -Path $buildDir)) {
-    mkdir $buildDir
+    mkdir $buildDir | Out-Null
 }
 
 
@@ -175,9 +178,10 @@ if(-not $Recompile) {
 }
 
 if($compileSources.count -eq 0) {
-    Write-Host "Up to date. Nothing to compile."
+    Write-Host "Up to date. Nothing to compile." -ForegroundColor $infoColor
 } else {
     Write-Host "Compile options: $compileOptions"
+    Write-Host "Compiling" -ForegroundColor $infoColor
     cl $compileOptions $compileSources
 }
 
@@ -190,11 +194,10 @@ if(-not $NoExe) {
     } else {
         $outFile = "$OutName.exe"
     }
-    Write-Host "Output file: $outFile"
 
     # Link
     if ($Tiny) {
-        Write-Host "Linking with crinkler"
+        Write-Host "Linking with crinkler" -ForegroundColor $infoColor
         # Doc: https://github.com/runestubbe/Crinkler/blob/master/doc/manual.txt
 
         $extraOptions = @()
@@ -211,18 +214,20 @@ if(-not $NoExe) {
                 kernel32.lib user32.lib gdi32.lib opengl32.lib bufferoverflowu.lib Winmm.lib
 
     } else {
-        Write-Host "Default linking"
+        Write-Host "Default linking" -ForegroundColor $infoColor
         link /OUT:$outFile `
             $objectFiles `
             user32.lib gdi32.lib opengl32.lib Winmm.lib
 
     }
+
+    Write-Host "Output file: $outFile" -ForegroundColor $infoColor
 }
 
 # Optional disassembly for debugging
 if($Disasm) {
     if(-not (Test-Path -Path $disasmDir)) {
-        mkdir $disasmDir
+        mkdir $disasmDir | Out-Null
     }
     Write-Host "Disassembling generated object files"
     foreach($objectFile in $objectFiles) {
