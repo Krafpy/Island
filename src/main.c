@@ -74,6 +74,7 @@ int WINAPI wWinMain(
         return 0;
     }
     ShowCursor(FALSE);
+    
     HWND hwnd = CreateWindow(
         CLASS_NAME,
         0,
