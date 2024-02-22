@@ -47,6 +47,22 @@ int WINAPI wWinMain(
     PWSTR pCmdLine, // command line arguments as Unicode string
     int nCmdShow // flag indicating if the current app's window is minimized, maximised or shown normally
 ) {
+
+    #ifdef DEBUG
+    // Register the window class
+    // The window class defines common data and behaviour of a window, and is
+    // used internally by the operating system.
+    // Each created window (window insance) must be associated with a window class.
+    const LPCSTR CLASS_NAME = "Sample Window Class";
+    WNDCLASS wc = {0};
+    wc.lpfnWndProc = WindowProc; // the window procedure used to handle messages
+    wc.hInstance = hInstance;
+    wc.lpszClassName = CLASS_NAME;
+    RegisterClass(&wc);
+    #else
+    const LPCSTR CLASS_NAME = "static";
+    #endif
+
     #ifndef NO_FULLSCREEN
     // Change display settings to fullscreen
     EnumDisplaySettings(NULL, 0, &displaySettings);
@@ -58,26 +74,15 @@ int WINAPI wWinMain(
         return 0;
     }
     ShowCursor(FALSE);
-    #endif
-
-    #ifdef DEBUG
-    // Register the window class
-    // The window class defines common data and behaviour of a window, and is
-    // used internally by the operating system.
-    // Each created window (window insance) must be associated with a window class.
-    const LPCSTR CLASS_NAME = "Sample Window Class";
-    
-    WNDCLASS wc = {0};
-    wc.lpfnWndProc = WindowProc; // the window procedure used to handle messages
-    wc.hInstance = hInstance;
-    wc.lpszClassName = CLASS_NAME;
-
-    RegisterClass(&wc);
+    HWND hwnd = CreateWindow(
+        CLASS_NAME,
+        0,
+        WS_POPUP | WS_VISIBLE, // unframed window (for fullscreen)
+        0, 0, XRES, YRES,
+        NULL, NULL, hInstance,
+        NULL
+    );
     #else
-    const LPCSTR CLASS_NAME = "static";
-    #endif
-
-    #ifdef NO_FULLSCREEN
     HWND hwnd = CreateWindow(
         CLASS_NAME, // the name of the window class to use for this window
         0, // the title of the window
@@ -91,15 +96,6 @@ int WINAPI wWinMain(
         NULL, // define a menu for the window, NULL for none
         hInstance, // the handle to this executable
         // a pointer to arbitrary data of type void*, here it's not used
-        NULL
-    );
-    #else
-    HWND hwnd = CreateWindow(
-        CLASS_NAME,
-        0,
-        WS_POPUP | WS_VISIBLE, // unframed window (for fullscreen)
-        0, 0, XRES, YRES,
-        NULL, NULL, hInstance,
         NULL
     );
     #endif
