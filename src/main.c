@@ -145,13 +145,7 @@ int WINAPI wWinMain(
         ExitProcess(0);
         return 0;
     }
-    if(waveOutWrite(waveHandle, &waveHeader, sizeof(waveHeader))) {
-        #ifdef DEBUG
-        MessageBox(hwnd, "Failed to play sound (waveOutWrite)", "Error", MB_OK);
-        #endif
-        ExitProcess(0);
-        return 0;
-    }
+    waveOutWrite(waveHandle, &waveHeader, sizeof(waveHeader));
     #endif
 
     #ifdef DEBUG
@@ -159,7 +153,8 @@ int WINAPI wWinMain(
     BOOL done = FALSE;
     SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)&done);
     MSG msg;
-
+    DWORD startTime = timeGetTime();
+    
     while(!done)
     #else
     while(!GetAsyncKeyState(VK_ESCAPE) && musicTime.u.sample < NUM_SAMPLES)
@@ -172,15 +167,21 @@ int WINAPI wWinMain(
         }
         #endif
 
+        #ifndef NO_SOUND
         // Pass the elapsed time in seconds since startup to the shaders
         GLfloat time = ((GLfloat)musicTime.u.sample / SAMPLE_RATE);
+        #else
+        GLfloat time = (GLfloat)(timeGetTime() - startTime) / 1000.f;
+        #endif
 
         intro_do(time);
         SwapBuffers(hdc);
         
         Sleep(1); // let other processes some time (1ms)
         // Get the new music time
+        #ifndef NO_SOUND
         waveOutGetPosition(waveHandle, &musicTime, sizeof(MMTIME));
+        #endif
     }
 
     #ifndef NO_FULLSCREEN
