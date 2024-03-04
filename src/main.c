@@ -16,28 +16,40 @@ static const PIXELFORMATDESCRIPTOR pfd = {
     .cStencilBits = 8
 };
 
-static const WAVHeader wavHeader = {
-    .riffHeader = 0x46464952, // little-endian "RIFF"
-    .wavSize = sizeof(WAVHeader) + DATA_BYTES - sizeof(char[8]),
-    .waveHeader = 0x45564157, // little-endian "WAVE"
-
-    .fmtHeader = 0x20746D66, // little-endian "fmt "
-    .fmtChunkSize = 16,
-    .audioFormat = 1,
-    .numChannels = NUM_CHANNELS,
-    .sampleRate = SAMPLE_RATE,
-    .byteRate = BYTE_RATE,
-    .sampleAlignment = SAMPLE_ALIGNMENT,
-    .bitDepth = BIT_DEPTH,
-    
-    .dataHeader = 0x61746164, // little-endian "data"
-    .dataBytes = DATA_BYTES
-};
-
-static WAVFile music;
-
 static DEVMODE displaySettings;
 
+static HWAVEOUT waveHandle;
+
+static short waveBuffer[MUSIC_DATA_BYTES];
+
+// https://learn.microsoft.com/en-us/windows/win32/api/mmeapi/ns-mmeapi-waveformatex
+static WAVEFORMATEX waveFormat = {
+    .wFormatTag = WAVE_FORMAT_PCM,
+    .nChannels = NUM_CHANNELS,
+    .nSamplesPerSec = SAMPLE_RATE,
+    .nAvgBytesPerSec = BYTE_RATE,
+    .nBlockAlign = SAMPLE_ALIGNMENT,
+    .wBitsPerSample = BIT_DEPTH,
+    .cbSize = 0
+};
+
+// https://learn.microsoft.com/en-us/previous-versions/dd743837(v=vs.85)
+static WAVEHDR waveHeader = {
+  .lpData = (LPSTR)waveBuffer,
+  .dwBufferLength = MUSIC_DATA_BYTES,
+  .dwBytesRecorded = 0,
+  .dwUser = 0,
+  .dwFlags = WHDR_PREPARED,
+  .dwLoops = 0,
+  .lpNext = 0,
+  .reserved = 0
+};
+
+// https://learn.microsoft.com/en-us/previous-versions/dd757347(v=vs.85)
+MMTIME musicTime = {
+    .wType = TIME_SAMPLES,
+    .u = {0}
+};
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -123,21 +135,24 @@ int WINAPI wWinMain(
     
     #ifndef NO_SOUND
     // Initialize the music file in memory
-    memcpy(&music, &wavHeader, sizeof(WAVHeader));
-    music_init((short*)&music.buffer);
+    music_init((short*)&waveBuffer);
     // Play the sound file directly from memory, asynchronously for the
     // music to play in background
-    if(!sndPlaySound((const char*)&music, SND_ASYNC | SND_MEMORY)) {
+    if (waveOutOpen(&waveHandle, WAVE_MAPPER, &waveFormat, 0, 0, CALLBACK_NULL)) {
         #ifdef DEBUG
-        MessageBox(hwnd, "Failed to play sound", "Error", MB_OK);
+        MessageBox(hwnd, "Failed to play sound (waveOutOpen)", "Error", MB_OK);
+        #endif
+        ExitProcess(0);
+        return 0;
+    }
+    if(waveOutWrite(waveHandle, &waveHeader, sizeof(waveHeader))) {
+        #ifdef DEBUG
+        MessageBox(hwnd, "Failed to play sound (waveOutWrite)", "Error", MB_OK);
         #endif
         ExitProcess(0);
         return 0;
     }
     #endif
-
-    // Main window loop
-    DWORD startTime = timeGetTime(), elapsedTime = 0;
 
     #ifdef DEBUG
     // Store a variable to check if the window needs to be closed
@@ -147,7 +162,7 @@ int WINAPI wWinMain(
 
     while(!done)
     #else
-    while(!GetAsyncKeyState(VK_ESCAPE) && elapsedTime < INTRO_DURATION*1000)
+    while(!GetAsyncKeyState(VK_ESCAPE) && musicTime.u.sample < NUM_SAMPLES)
     #endif
     {
         #ifdef DEBUG
@@ -158,17 +173,15 @@ int WINAPI wWinMain(
         #endif
 
         // Pass the elapsed time in seconds since startup to the shaders
-        elapsedTime = timeGetTime() - startTime;
-        GLfloat time = ((GLfloat)elapsedTime) / 1000.f;
+        GLfloat time = ((GLfloat)musicTime.u.sample / SAMPLE_RATE);
 
         intro_do(time);
         SwapBuffers(hdc);
         
         Sleep(1); // let other processes some time (1ms)
+        // Get the new music time
+        waveOutGetPosition(waveHandle, &musicTime, sizeof(MMTIME));
     }
-    
-    // Stop any remaining sound from playing
-    sndPlaySound(NULL, 0);
 
     #ifndef NO_FULLSCREEN
     // Back to default display settings
