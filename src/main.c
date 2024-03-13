@@ -148,16 +148,23 @@ int WINAPI wWinMain(
     waveOutWrite(waveHandle, &waveHeader, sizeof(waveHeader));
     #endif
 
+    #ifdef NO_SOUND
+    DWORD startTime = timeGetTime(), elapsedTime = 0;
+    #endif
+
     #ifdef DEBUG
     // Store a variable to check if the window needs to be closed
     BOOL done = FALSE;
     SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)&done);
     MSG msg;
-    DWORD startTime = timeGetTime();
-    
     while(!done)
     #else
-    while(!GetAsyncKeyState(VK_ESCAPE) && musicTime.u.sample < NUM_SAMPLES)
+        #ifdef NO_SOUND
+            #define INTRO_NOT_DONE elapsedTime < INTRO_DURATION*1000
+        #else
+            #define INTRO_NOT_DONE musicTime.u.sample < NUM_SAMPLES
+        #endif
+    while(!GetAsyncKeyState(VK_ESCAPE) && INTRO_NOT_DONE)
     #endif
     {
         #ifdef DEBUG
@@ -167,11 +174,12 @@ int WINAPI wWinMain(
         }
         #endif
 
-        #ifndef NO_SOUND
+        #ifdef NO_SOUND
+        elapsedTime = timeGetTime() - startTime;
+        GLfloat time = (GLfloat)elapsedTime / 1000.f;
+        #else
         // Pass the elapsed time in seconds since startup to the shaders
         GLfloat time = ((GLfloat)musicTime.u.sample / SAMPLE_RATE);
-        #else
-        GLfloat time = (GLfloat)(timeGetTime() - startTime) / 1000.f;
         #endif
 
         intro_do(time);
