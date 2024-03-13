@@ -75,7 +75,23 @@ int WINAPI wWinMain(
     const LPCSTR CLASS_NAME = "static";
     #endif
 
-    #ifndef NO_FULLSCREEN
+    #ifdef NO_FULLSCREEN
+    HWND hwnd = CreateWindow(
+        CLASS_NAME, // the name of the window class to use for this window
+        0, // the title of the window
+        // set of flags to describe the look and feel of the window,
+        // this is the default combination of flags that set a title bar, border,
+        // menu, minimize and maximize buttons
+        WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+        // xy-position, height and width of the window, set to default
+        0, 0, XRES, YRES,
+        NULL, // parent window, NULL for a top level window
+        NULL, // define a menu for the window, NULL for none
+        hInstance, // the handle to this executable
+        // a pointer to arbitrary data of type void*, here it's not used
+        NULL
+    );
+    #else
     // Change display settings to fullscreen
     EnumDisplaySettings(NULL, 0, &displaySettings);
     displaySettings.dmPelsWidth  = XRES;
@@ -93,22 +109,6 @@ int WINAPI wWinMain(
         WS_POPUP | WS_VISIBLE, // unframed window (for fullscreen)
         0, 0, XRES, YRES,
         NULL, NULL, hInstance,
-        NULL
-    );
-    #else
-    HWND hwnd = CreateWindow(
-        CLASS_NAME, // the name of the window class to use for this window
-        0, // the title of the window
-        // set of flags to describe the look and feel of the window,
-        // this is the default combination of flags that set a title bar, border,
-        // menu, minimize and maximize buttons
-        WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-        // xy-position, height and width of the window, set to default
-        0, 0, XRES, YRES,
-        NULL, // parent window, NULL for a top level window
-        NULL, // define a menu for the window, NULL for none
-        hInstance, // the handle to this executable
-        // a pointer to arbitrary data of type void*, here it's not used
         NULL
     );
     #endif
