@@ -8,5 +8,3 @@
 #ifndef YRES
 #define YRES 480
 #endif
-
-#define MUSIC_BPM (60*20/INTRO_DURATION)
