@@ -44,9 +44,9 @@ void intro_init(HWND hwnd) {
 
     #ifdef DEBUG
     GLuint result;
-    GLchar info[1536];
+    GLchar info[2048];
     glGetProgramiv(fragShader, GL_LINK_STATUS, &result);
-    glGetProgramInfoLog(fragShader, 1024, NULL, info);
+    glGetProgramInfoLog(fragShader, 2048, NULL, info);
     if(!result) {
         MessageBox(hwnd, info, "FS error", MB_OK);
         ExitProcess(0);
