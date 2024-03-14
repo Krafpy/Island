@@ -6,37 +6,16 @@
 
 // Define the modern OpenGL functions to load from the driver
 
-static const char* glFuncNames[] = {
-    "glCreateShaderProgramv",
-    "glUseProgram",
-    "glProgramUniform4fv",
-    #ifdef DEBUG
-    "glGetProgramiv",
-    "glGetProgramInfoLog"
-    #endif
-};
-
-#define N_GL_FUNCS (sizeof(glFuncNames)/sizeof(char*))
-
-static void* glFuncs[N_GL_FUNCS];
-
-#define glCreateShaderProgramv ((PFNGLCREATESHADERPROGRAMVPROC)glFuncs[0])
-#define glUseProgram ((PFNGLUSEPROGRAMPROC)glFuncs[1])
-#define glProgramUniform4fv ((PFNGLPROGRAMUNIFORM4FVPROC)glFuncs[2])
-#ifdef DEBUG
-#define glGetProgramiv ((PFNGLGETPROGRAMIVPROC)glFuncs[3])
-#define glGetProgramInfoLog ((PFNGLGETPROGRAMINFOLOGPROC)glFuncs[4])
-#endif
+#define glCreateShaderProgramv ((PFNGLCREATESHADERPROGRAMVPROC)wglGetProcAddress("glCreateShaderProgramv"))
+#define glUseProgram ((PFNGLUSEPROGRAMPROC)wglGetProcAddress("glUseProgram"))
+#define glProgramUniform4fv ((PFNGLPROGRAMUNIFORM4FVPROC)wglGetProcAddress("glProgramUniform4fv"))
+#define glGetProgramiv ((PFNGLGETPROGRAMIVPROC)wglGetProcAddress("glGetProgramiv"))
+#define glGetProgramInfoLog ((PFNGLGETPROGRAMINFOLOGPROC)wglGetProcAddress("glGetProgramInfoLog"))
 
 
 static GLuint fragShader;
 
 void intro_init(HWND hwnd) {
-    // Load the required OpenGL functions
-    for(int i = 0; i < N_GL_FUNCS; i++){
-        glFuncs[i] = wglGetProcAddress(glFuncNames[i]);
-    }
-
     // Create a fragment shader program, the default vertex shader will
     // be used (?)
     fragShader = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &shader_frag);
