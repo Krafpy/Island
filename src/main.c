@@ -35,14 +35,14 @@ static WAVEFORMATEX waveFormat = {
 
 // https://learn.microsoft.com/en-us/previous-versions/dd743837(v=vs.85)
 static WAVEHDR waveHeader = {
-  .lpData = (LPSTR)waveBuffer,
-  .dwBufferLength = MUSIC_DATA_BYTES,
-  .dwBytesRecorded = 0,
-  .dwUser = 0,
-  .dwFlags = WHDR_PREPARED,
-  .dwLoops = 0,
-  .lpNext = 0,
-  .reserved = 0
+    .lpData = (LPSTR)waveBuffer,
+    .dwBufferLength = MUSIC_DATA_BYTES,
+    .dwBytesRecorded = 0,
+    .dwUser = 0,
+    .dwFlags = WHDR_PREPARED,
+    .dwLoops = 0,
+    .lpNext = 0,
+    .reserved = 0
 };
 
 // https://learn.microsoft.com/en-us/previous-versions/dd757347(v=vs.85)
