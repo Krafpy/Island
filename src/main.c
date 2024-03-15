@@ -200,7 +200,7 @@ int WINAPI wWinMain(
         
         #ifndef NO_SOUND
         music_init(waveBuffer);
-        save_audio(waveBuffer);
+        save_audio(waveBuffer, MUSIC_DATA_BYTES, hwnd);
         #endif
 
         BOOL done = FALSE;
