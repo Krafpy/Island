@@ -2,8 +2,8 @@
     "DebugMode": true,
     "Tiny": false,
     "Fullscreen": false,
-    "Sound": true,
-    "XRes": 640,
-    "YRes": 480,
+    "Sound": false,
+    "XRes": 1280,
+    "YRes": 720,
     "OutName": "main"
 }

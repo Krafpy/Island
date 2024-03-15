@@ -80,7 +80,7 @@ $shaderFiles = Get-ChildItem -Path $shadersDir -Recurse `
                 | ForEach-Object {$_.FullName}
 if((ItemNeedsUpdate $shadersIncludeFile $shaderFiles) -or $Recompile) {
     Write-Host "Minifying shaders..." -ForegroundColor $infoColor
-    shader_minifier $shaderFiles -o $shadersIncludeFile
+    shader_minifier $shaderFiles -o $shadersIncludeFile --aggressive-inlining
 }
 
 # Available options:
