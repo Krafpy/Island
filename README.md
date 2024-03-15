@@ -33,9 +33,14 @@ inline, rewrite or remove some of the code here in addition to writing your own.
 - `fp.h`: useful set of approximate floats ([by iq](https://iquilezles.org/articles/float4k/));
 - `intro.h`/`intro.c`: rendering initialisation and update;
 - `synth.h`/`synth.c`: functions for the audio synthetizer;
-- `music.h`/`music.c`: music file generation.
+- `music.h`/`music.c`: music generation.
+- `stb_image_write.h`/`stb_image_write.c`: used to save frames to png,
+    taken from [stb](https://github.com/nothings/stb);
+- `capture.h`/`capture.c`: set of functions used for video capture
 
 ## Build
+
+### Building the intro
 
 The compilation tricks to generate a small executable follow the recommandations described
 in [this article by iq](https://iquilezles.org/articles/compilingsmall/), with some updates.
@@ -80,4 +85,29 @@ To see all the build options enter:
 
 ```powershell
 Get-Help .\build.ps1
+```
+
+### Video capture
+
+This requires [`ffmpeg`](https://ffmpeg.org/) to be installed and accessible via the command line.
+Build the intro with the `-Capture` flag, and run the generated executable:
+
+```powershell
+.\capture_main.exe
+```
+
+Note that the capture executable will always be in windowed debug mode.
+Once capture is complete, frames and audio are stored in the
+newly created `capture` folder.
+
+Generate the video file `capture.mp4` by calling:
+
+```powershell
+.\encode.ps1
+```
+
+To see encoding options enter:
+
+```powershell
+Get-Help .\encode.ps1
 ```
