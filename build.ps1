@@ -77,7 +77,7 @@ $shadersIncludeFile = "$sourceDir/shaders.inl"
 $shaderFiles = Get-ChildItem -Path $shadersDir -Recurse `
                 | Where-Object{$_.Extension -match '^.(frag|vert|glsl)$'} `
                 | ForEach-Object {$_.FullName}
-if(ItemNeedsUpdate $shadersIncludeFile $shaderFiles) {
+if((ItemNeedsUpdate $shadersIncludeFile $shaderFiles) -or $Recompile) {
     Write-Host "Minifying shaders..." -ForegroundColor $infoColor
     shader_minifier $shaderFiles -o $shadersIncludeFile
 }
