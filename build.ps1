@@ -97,6 +97,7 @@ if($Capture) {
     $compileOptions += '/DCAPTURE'
     $DebugMode = $true
     $Fullscreen = $false
+    $Tiny = $false
 }
 if($DebugMode) {
     $compileOptions += '/DDEBUG'
