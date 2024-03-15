@@ -3,3 +3,5 @@ obj
 dis
 *.exe
 *.tmp
+capture
+*.mp4

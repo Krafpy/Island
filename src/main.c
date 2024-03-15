@@ -4,6 +4,7 @@
 #include "intro.h"
 #include "music.h"
 #include "config.h"
+#include "capture.h"
 
 
 static const PIXELFORMATDESCRIPTOR pfd = {
@@ -130,67 +131,95 @@ int WINAPI wWinMain(
     HGLRC hglrc = wglCreateContext(hdc);
     wglMakeCurrent(hdc, hglrc);
 
-    // Initialize the intro's rendering pipeline
-    intro_init(hwnd);
-    
-    #ifndef NO_SOUND
-    // Initialize the music file in memory
-    music_init((short*)&waveBuffer);
-    // Play the sound file directly from memory, asynchronously for the
-    // music to play in background
-    if (waveOutOpen(&waveHandle, WAVE_MAPPER, &waveFormat, 0, 0, CALLBACK_NULL)) {
-        #ifdef DEBUG
-        MessageBox(hwnd, "Failed to play sound (waveOutOpen)", "Error", MB_OK);
-        #endif
-        ExitProcess(0);
-        return 0;
-    }
-    waveOutWrite(waveHandle, &waveHeader, sizeof(waveHeader));
-    #endif
+    #ifndef CAPTURE
+        // Initialize the intro's rendering pipeline
+        intro_init(hwnd);
 
-    #ifdef NO_SOUND
-    DWORD startTime = timeGetTime(), elapsedTime = 0;
-    #endif
-
-    #ifdef DEBUG
-    // Store a variable to check if the window needs to be closed
-    BOOL done = FALSE;
-    SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)&done);
-    MSG msg;
-    while(!done)
-    #else
-        #ifdef NO_SOUND
-            #define INTRO_NOT_DONE elapsedTime < INTRO_DURATION*1000
-        #else
-            #define INTRO_NOT_DONE musicTime.u.sample < NUM_SAMPLES
-        #endif
-    while(!GetAsyncKeyState(VK_ESCAPE) && INTRO_NOT_DONE)
-    #endif
-    {
-        #ifdef DEBUG
-        while(PeekMessage(&msg, hwnd, 0, 0, PM_REMOVE)){
-            TranslateMessage(&msg); // translate keyboard messages if necessary
-            DispatchMessage(&msg); // call the window procedure
-        }
-        #endif
-
-        #ifdef NO_SOUND
-        elapsedTime = timeGetTime() - startTime;
-        GLfloat time = (GLfloat)elapsedTime / 1000.f;
-        #else
-        // Pass the elapsed time in seconds since startup to the shaders
-        GLfloat time = ((GLfloat)musicTime.u.sample / SAMPLE_RATE);
-        #endif
-
-        intro_do(time);
-        SwapBuffers(hdc);
-        
-        Sleep(1); // let other processes some time (1ms)
-        // Get the new music time
         #ifndef NO_SOUND
-        waveOutGetPosition(waveHandle, &musicTime, sizeof(MMTIME));
+        // Initialize the music file in memory
+        music_init(waveBuffer);
+        // Play the sound file directly from memory, asynchronously for the
+        // music to play in background
+        if (waveOutOpen(&waveHandle, WAVE_MAPPER, &waveFormat, 0, 0, CALLBACK_NULL)) {
+            #ifdef DEBUG
+            MessageBox(hwnd, "Failed to play sound (waveOutOpen)", "Error", MB_OK);
+            #endif
+            ExitProcess(0);
+            return 0;
+        }
+        waveOutWrite(waveHandle, &waveHeader, sizeof(waveHeader));
         #endif
-    }
+
+        #ifdef NO_SOUND
+        DWORD startTime = timeGetTime(), elapsedTime = 0;
+        #endif
+
+        #ifdef DEBUG
+        // Store a variable to check if the window needs to be closed
+        BOOL done = FALSE;
+        SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)&done);
+        MSG msg;
+        while(!done)
+        #else
+            #ifdef NO_SOUND
+                #define INTRO_NOT_DONE elapsedTime < INTRO_DURATION*1000
+            #else
+                #define INTRO_NOT_DONE musicTime.u.sample < NUM_SAMPLES
+            #endif
+        while(!GetAsyncKeyState(VK_ESCAPE) && INTRO_NOT_DONE)
+        #endif
+        {
+            #ifdef DEBUG
+            while(PeekMessage(&msg, hwnd, 0, 0, PM_REMOVE)){
+                TranslateMessage(&msg); // translate keyboard messages if necessary
+                DispatchMessage(&msg); // call the window procedure
+            }
+            #endif
+
+            #ifdef NO_SOUND
+            elapsedTime = timeGetTime() - startTime;
+            GLfloat time = (GLfloat)elapsedTime / 1000.f;
+            #else
+            // Pass the elapsed time in seconds since startup to the shaders
+            GLfloat time = ((GLfloat)musicTime.u.sample / SAMPLE_RATE);
+            #endif
+
+            intro_do(time);
+            SwapBuffers(hdc);
+            
+            Sleep(1); // let other processes some time (1ms)
+            // Get the new music time
+            #ifndef NO_SOUND
+            waveOutGetPosition(waveHandle, &musicTime, sizeof(MMTIME));
+            #endif
+        }
+    #else
+        init_capture(hwnd);
+
+        intro_init(hwnd);
+        
+        #ifndef NO_SOUND
+        music_init(waveBuffer);
+        save_audio(waveBuffer);
+        #endif
+
+        BOOL done = FALSE;
+        SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)&done);
+        MSG msg;
+        for(int i = 0; i < INTRO_DURATION*CAPTURE_FRAMERATE && !done; i++) {
+            while(PeekMessage(&msg, hwnd, 0, 0, PM_REMOVE)){
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+            }
+
+            GLfloat time = ((GLfloat)i / (GLfloat)CAPTURE_FRAMERATE);
+
+            intro_do(time);
+            SwapBuffers(hdc);
+
+            save_frame(i);
+        }
+    #endif
 
     #ifndef NO_FULLSCREEN
     // Back to default display settings
@@ -202,7 +231,6 @@ int WINAPI wWinMain(
     return 0;
 }
 
-#ifdef DEBUG
 LRESULT CALLBACK WindowProc(
     HWND hwnd, // the handle to the window that receives the message
     UINT uMsg, // the message code
@@ -222,4 +250,3 @@ LRESULT CALLBACK WindowProc(
     }
     return 0;
 }
-#endif

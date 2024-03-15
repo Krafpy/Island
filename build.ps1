@@ -14,7 +14,9 @@ param (
     [switch]$Recompile,
     [switch]$Disasm,
     [switch]$SuffixWithRes,
-    [int]$CrinklerTries = 0
+    [int]$CrinklerTries = 0,
+
+    [switch]$Capture
 )
 
 if ($MyInvocation.BoundParameters['defaults']) {
@@ -90,6 +92,12 @@ $compileOptions = @(
     "/Fo$buildDir/" # Output directory
 )
 
+
+if($Capture) {
+    $compileOptions += '/DCAPTURE'
+    $DebugMode = $true
+    $Fullscreen = $false
+}
 if($DebugMode) {
     $compileOptions += '/DDEBUG'
 } else {
@@ -191,9 +199,14 @@ $objectFiles = Get-ChildItem -Path $buildDir -Filter "*.obj" -Recurse `
 
 if(-not $NoExe) {
     if($SuffixWithRes) {
-        $outFile = "$OutName-$YRes.exe"
+        $outFile = "$OutName_$YRes.exe"
     } else {
         $outFile = "$OutName.exe"
+    }
+
+    if($Capture) {
+        $Tiny = $false # No compression when in capture mode
+        $outFile = "capture_$outFile"
     }
 
     # Link
