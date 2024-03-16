@@ -57,6 +57,8 @@ const char *shader_frag =
        "i=vec3(.65,.6,.5)*max(0.,dot(C,l))+vec3(.9,.8,.7)*pow(max(0.,dot(C,normalize(l-d))),16.)*(.5+.5*t);"
        "i+=vec3(.1,.2,.3)*.2*(max(0.,-dot(C,l))+t);"
      "}"
+   "else"
+     " i=vec3(.5,.6,.7);"
    "i=pow(i,vec3(1./2.2));"
    "r=vec4(i,1);"
  "}";

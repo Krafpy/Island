@@ -96,7 +96,7 @@ Build the intro with the `-Capture` flag, and run the generated executable:
 .\capture_main.exe
 ```
 
-Note that the capture executable is non-compressed and in windowed debug mode.
+Note that the capture executable is non-compressed and fullscreen debug mode.
 Once capture is complete, frames and audio are stored in the
 newly created `capture` folder.
 

@@ -4,11 +4,7 @@
 #include "config.h"
 #include "stb_image_write.h"
 
-#define _STRIDE (3*XRES)
-#define STRIDE (_STRIDE + ((_STRIDE % 4) ? (4 - _STRIDE % 4) : 0))
-#define BUF_SIZE (STRIDE*YRES)
-
-static unsigned char* pixels[BUF_SIZE];
+static unsigned char pixels[3*XRES*YRES];
 
 void init_capture(HWND hwnd) {
     CreateDirectory("capture", NULL);
@@ -16,13 +12,13 @@ void init_capture(HWND hwnd) {
 
 void save_frame(int frame) {
     glReadBuffer(GL_FRONT);
-    glPixelStorei(GL_PACK_ALIGNMENT, 4);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
     glReadPixels(0, 0, XRES, YRES, GL_RGB, GL_UNSIGNED_BYTE, pixels);
     
     char fileName[1024];
     wsprintf(fileName, ".\\capture\\frame_%06d.png", frame);
     stbi_flip_vertically_on_write(1);
-    stbi_write_png(fileName, XRES, YRES, 3, pixels, STRIDE);
+    stbi_write_png(fileName, XRES, YRES, 3, pixels, 3*XRES);
 }
 
 void save_audio(short* buffer, int bytes, HWND hwnd) {

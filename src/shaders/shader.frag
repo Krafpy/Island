@@ -65,6 +65,8 @@ void main()
         float fr = pow(1.-max(0.,dot(n,-rd)), 5.);
         col = vec3(0.65,0.6,0.5)*fd + vec3(0.9,0.8,0.7)*fs*(0.5+0.5*fr);
         col += vec3(0.1,0.2,0.3)*0.2*(max(0., -dot(n,ldir))+fr);
+    } else {
+        col = vec3(0.5,0.6,0.7);
     }
     col = pow(col, vec3(1./2.2));
     outCol = vec4(col,1.0);
