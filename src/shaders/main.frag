@@ -402,7 +402,7 @@ vec3 lighting(vec3 p, vec3 ro, vec3 rd) {
     vec3 q = p;
     q.y -= getHexHeights(hexc, rand).y;
 
-    vec3 n = normalize(normal(p) + (1.-isCube)*0.03*sin(PI*vec3(pow(fbm(2.*q),6.))));
+    vec3 n = normal(p);
     
     vec3 l = sunDir;
     vec3 v = -rd;
@@ -415,7 +415,7 @@ vec3 lighting(vec3 p, vec3 ro, vec3 rd) {
     float LdotH = clamp(dot(l, h), 0.0, 1.0);
     float VdotH = clamp(dot(v, h), 0.0, 1.0);
     
-    float rough = mix(mix(0.1,0.7,rand.y), cubeRough, isCube);
+    float rough = mix(mix(0.1,0.7,rand.y) + 0.05*sin(PI*pow(fbm(2.*q),6.)), cubeRough, isCube);
     float rough2 = rough*rough;
     float D = pow(NdotH,2./rough2-2.)/(PI*rough2);
     
