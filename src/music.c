@@ -16,7 +16,7 @@ static float music_wave(float t) {
     float sig = 0.f;
 
     float fc = sequence(t, notes, N_NOTES(notes), BDUR);
-    sig += 0.5*osc_tri(fc*t + 1.f*sinf((fc-1.f)*t));
+    sig += 0.5*tri(fc*t + 1.f*sinf((fc-1.f)*t));
     sig += sinf((fc+2.f)*t + 1.5f*sinf((fc+1.f)*t));
     sig *= 0.25f;
 
