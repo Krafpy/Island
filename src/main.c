@@ -76,23 +76,7 @@ int WINAPI wWinMain(
     const LPCSTR CLASS_NAME = "static";
     #endif
 
-    #ifdef NO_FULLSCREEN
-    HWND hwnd = CreateWindow(
-        CLASS_NAME, // the name of the window class to use for this window
-        0, // the title of the window
-        // set of flags to describe the look and feel of the window,
-        // this is the default combination of flags that set a title bar, border,
-        // menu, minimize and maximize buttons
-        WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-        // xy-position, height and width of the window, set to default
-        0, 0, XRES, YRES,
-        NULL, // parent window, NULL for a top level window
-        NULL, // define a menu for the window, NULL for none
-        hInstance, // the handle to this executable
-        // a pointer to arbitrary data of type void*, here it's not used
-        NULL
-    );
-    #else
+    #ifdef FULLSCREEN
     // Change display settings to fullscreen
     EnumDisplaySettings(NULL, 0, &displaySettings);
     displaySettings.dmPelsWidth  = XRES;
@@ -110,6 +94,22 @@ int WINAPI wWinMain(
         WS_POPUP | WS_VISIBLE, // unframed window (for fullscreen)
         0, 0, XRES, YRES,
         NULL, NULL, hInstance,
+        NULL
+    );
+    #else
+    HWND hwnd = CreateWindow(
+        CLASS_NAME, // the name of the window class to use for this window
+        0, // the title of the window
+        // set of flags to describe the look and feel of the window,
+        // this is the default combination of flags that set a title bar, border,
+        // menu, minimize and maximize buttons
+        WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+        // xy-position, height and width of the window, set to default
+        0, 0, XRES, YRES,
+        NULL, // parent window, NULL for a top level window
+        NULL, // define a menu for the window, NULL for none
+        hInstance, // the handle to this executable
+        // a pointer to arbitrary data of type void*, here it's not used
         NULL
     );
     #endif
@@ -135,7 +135,7 @@ int WINAPI wWinMain(
         // Initialize the intro's rendering pipeline
         intro_init(hwnd);
 
-        #ifndef NO_SOUND
+        #ifdef SOUND
         // Initialize the music file in memory
         music_init(waveBuffer);
         // Play the sound file directly from memory, asynchronously for the
@@ -148,10 +148,12 @@ int WINAPI wWinMain(
             return 0;
         }
         waveOutWrite(waveHandle, &waveHeader, sizeof(waveHeader));
-        #endif
 
-        #ifdef NO_SOUND
+        #define INTRO_NOT_DONE musicTime.u.sample < NUM_SAMPLES
+        #else
         DWORD startTime = timeGetTime(), elapsedTime = 0;
+
+        #define INTRO_NOT_DONE elapsedTime < INTRO_DURATION*1000
         #endif
 
         #ifdef DEBUG
@@ -161,11 +163,6 @@ int WINAPI wWinMain(
         MSG msg;
         while(!done)
         #else
-            #ifdef NO_SOUND
-                #define INTRO_NOT_DONE elapsedTime < INTRO_DURATION*1000
-            #else
-                #define INTRO_NOT_DONE musicTime.u.sample < NUM_SAMPLES
-            #endif
         while(!GetAsyncKeyState(VK_ESCAPE) && INTRO_NOT_DONE)
         #endif
         {
@@ -176,12 +173,12 @@ int WINAPI wWinMain(
             }
             #endif
 
-            #ifdef NO_SOUND
+            // Pass the elapsed time in seconds since startup to the shaders
+            #ifdef SOUND
+            GLfloat time = ((GLfloat)musicTime.u.sample / SAMPLE_RATE);
+            #else
             elapsedTime = timeGetTime() - startTime;
             GLfloat time = (GLfloat)elapsedTime / 1000.f;
-            #else
-            // Pass the elapsed time in seconds since startup to the shaders
-            GLfloat time = ((GLfloat)musicTime.u.sample / SAMPLE_RATE);
             #endif
 
             intro_do(time);
@@ -189,7 +186,7 @@ int WINAPI wWinMain(
             
             Sleep(1); // let other processes some time (1ms)
             // Get the new music time
-            #ifndef NO_SOUND
+            #ifdef SOUND
             waveOutGetPosition(waveHandle, &musicTime, sizeof(MMTIME));
             #endif
         }
@@ -198,7 +195,7 @@ int WINAPI wWinMain(
 
         intro_init(hwnd);
         
-        #ifndef NO_SOUND
+        #ifdef SOUND
         music_init(waveBuffer);
         save_audio(waveBuffer, MUSIC_DATA_BYTES, hwnd);
         #endif
@@ -221,7 +218,7 @@ int WINAPI wWinMain(
         }
     #endif
 
-    #ifndef NO_FULLSCREEN
+    #ifdef FULLSCREEN
     // Back to default display settings
     ChangeDisplaySettings(NULL, 0);
     ShowCursor(TRUE);

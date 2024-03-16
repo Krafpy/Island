@@ -104,11 +104,11 @@ if($DebugMode) {
 } else {
     $compileOptions += '/GS-' # No buffer security check
 }
-if(-not $Sound) { 
-    $compileOptions += '/DNO_SOUND'
+if($Sound) { 
+    $compileOptions += '/DSOUND'
 }
-if(-not $Fullscreen) {
-    $compileOptions += '/DNO_FULLSCREEN'
+if($Fullscreen) {
+    $compileOptions += '/DFULLSCREEN'
 }
 $compileOptions += "/DXRES=$XRes"
 $compileOptions += "/DYRES=$YRes"
