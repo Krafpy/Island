@@ -5,3 +5,4 @@ dis
 *.tmp
 capture
 *.mp4
+src/shaders.inl
