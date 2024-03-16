@@ -25,8 +25,8 @@
 
 
 float envelope(float t, float a, float s, float r);
-float osc_tri(float t);
-float osc_saw(float t);
-float osc_sqr(float t);
+float tri(float t);
+float saw(float t);
+float sqr(float t);
 float pha_lerp(float t, float f0, float df, float d);
 float sequence(float t, char* notes, int l, float d);

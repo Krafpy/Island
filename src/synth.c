@@ -85,7 +85,7 @@ float envelope(float t, float a, float s, float r) {
 }
 
 // Triangle wave oscillator.
-float osc_tri(float t) {
+float tri(float t) {
     // return 1.f - 2.f*fabs(fmodf(t/M_PI, 2.f) - 1.f);
     __asm {
         fld1                // 1
@@ -103,7 +103,7 @@ float osc_tri(float t) {
 }
 
 // Saw tooth wave oscillator.
-float osc_saw(float t) {
+float saw(float t) {
     __asm {
         fld1                // 1
         fadd st, st         // 2
@@ -118,7 +118,7 @@ float osc_saw(float t) {
 }
 
 // Square wave oscillator
-float osc_sqr(float t) {
+float sqr(float t) {
     union {
         float f;
         int i;
