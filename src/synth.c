@@ -144,11 +144,14 @@ float plerp(float t, float f0, float df, float d) {
     #endif
 }
 
+// Returns the note played at the given time given a note
+// sequence of l notes, each of duration d.
 char note(float t, char* notes, int l, float d) {
     int i = ((int)(t/d)) % l;
     return notes[i];
 }
 
+// Computes and returns the frequency of the given note.
 float freq(char n) {
     #ifdef FREQ_AS_PULSE
     return PULSE_C0 * powf(NEXT_NOTE, (float)n);
