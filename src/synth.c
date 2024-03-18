@@ -135,7 +135,7 @@ float sqr(float t) {
 
 // Computes a phase that switches from frequency f0 to f0 + df
 // over the duration d, and maintains the final frequency.
-float pha_lerp(float t, float f0, float df, float d) {
+float plerp(float t, float f0, float df, float d) {
     float m = t < d ? t : d;
     #ifdef FREQ_AS_PULSE
     return f0*t + df*(m*m/(2.f*d) + t - m);
@@ -144,10 +144,23 @@ float pha_lerp(float t, float f0, float df, float d) {
     #endif
 }
 
+char note(float t, char* notes, int l, float d) {
+    int i = ((int)(t/d)) % l;
+    return notes[i];
+}
+
+float freq(char n) {
+    #ifdef FREQ_AS_PULSE
+    return PULSE_C0 * powf(NEXT_NOTE, (float)n);
+    #else
+    return FREQ_C0 * powf(NEXT_NOTE, (float)n);
+    #endif
+}
+
 // Returns the frequency of the note played at the given
 // time given notes the sequences of l notes, each of
 // duration d.
-float sequence(float t, char* notes, int l, float d) {
+float fseq(float t, char* notes, int l, float d) {
     int i = ((int)(t/d)) % l;
     float n = (float)notes[i];
     #ifdef FREQ_AS_PULSE

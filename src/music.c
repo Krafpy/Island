@@ -18,7 +18,7 @@ void music_init(short* buffer) {
         float t = (float)i/(float)SAMPLE_RATE;
         float nt = fmodf(t, BEAT_DURATION);
 
-        float fc = sequence(t, notes, N_NOTES(notes), BEAT_DURATION);
+        float fc = fseq(t, notes, N_NOTES(notes), BEAT_DURATION);
         float sig = tri(fc*t);
         sig *= envelope(nt, 0.1f*BEAT_DURATION, 0.1f*BEAT_DURATION, 0.5f*BEAT_DURATION);
 
