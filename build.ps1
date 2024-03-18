@@ -16,7 +16,8 @@ param (
     [switch]$SuffixWithRes,
     [int]$CrinklerTries = 0,
 
-    [switch]$Capture
+    [switch]$Capture,
+    [switch]$NoVideo
 )
 
 if ($MyInvocation.BoundParameters['defaults']) {
@@ -95,8 +96,13 @@ $compileOptions = @(
 
 if($Capture) {
     $compileOptions += '/DCAPTURE'
+    if($NoVideo) {
+        $Fullscreen = $false
+    } else {
+        $compileOptions += '/DVIDEO'
+        $Fullscreen = $true
+    }
     $DebugMode = $true
-    $Fullscreen = $true
     $Tiny = $false
 }
 if($DebugMode) {

@@ -200,6 +200,7 @@ int WINAPI wWinMain(
         save_audio(waveBuffer, MUSIC_DATA_BYTES, hwnd);
         #endif
 
+        #ifdef VIDEO
         BOOL done = FALSE;
         SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)&done);
         MSG msg;
@@ -216,6 +217,7 @@ int WINAPI wWinMain(
 
             save_frame(i);
         }
+        #endif
     #endif
 
     #ifdef FULLSCREEN
