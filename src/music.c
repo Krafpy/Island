@@ -16,11 +16,29 @@
 #define SEQUENCE(dur_ratio,num_repeat,...) \
     NUMARGS(__VA_ARGS__),dur_ratio,num_repeat,__VA_ARGS__
 
+#define REP(...) __VA_ARGS__,
+
 #define NONE -1 // special note indicating no note playing
 
 static char sequences[] = {
     SEQUENCE(2, 0, D(3), F(3), C(3), A(2)),
-    SEQUENCE(2, 1, F(3), A(3), E(3), C(3))
+    SEQUENCE(2, 1, F(3), A(3), E(3), C(3)),
+    SEQUENCE(20, 0,
+        C(4), E(4), G(4), B(4),
+        C(4), E(4), G(4), B(4),
+        C(4), E(4), G(4), B(4),
+        C(4), E(4), G(4), B(4),
+
+        E(4), G(4), B(4), D(5),
+        E(4), G(4), B(4), D(5),
+        E(4), G(4), B(4), D(5),
+        E(4), G(4), B(4), D(5),
+
+        A(3), C(4), E(4), G(4),
+        A(3), C(4), E(4), G(4),
+        A(3), C(4), E(4), G(4),
+        A(3), C(4), E(4), G(4)
+    )
 };
 
 #define SEQS_SIZE sizeof(sequences)/sizeof(char)
@@ -52,20 +70,20 @@ inline float wave(float t) {
 
         float f = freq(n);
         float v = fmodf(u, 1.f);
-
+        
         switch(id) {
         case 0:
         case 1:
             out += sinf(f*t) * envelope(v, 0.1f, 0.8f, 0.1f);
             break;
+        case 2:
+            out += tri(f*t) * envelope(v, 0.1f, 0.8f, 0.1f);
         default:
             break;
         }
     }
     return out;
 }
-
-#define N_NOTES (sizeof(notes)/sizeof(char))
 
 void music_init(short* buffer) {
     // Generate the music's audio signal
