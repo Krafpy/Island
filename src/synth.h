@@ -29,6 +29,5 @@ float tri(float t);
 float saw(float t);
 float sqr(float t);
 float plerp(float t, float f0, float df, float d);
-char note(float t, char* notes, int l, float d);
+float pFM(float t, float fc, float iom, float pm);
 float freq(char n);
-float fseq(float t, char* notes, int l, float d);
