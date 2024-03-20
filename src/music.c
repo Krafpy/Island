@@ -78,6 +78,7 @@ inline float wave(float t) {
             break;
         case 2:
             out += tri(f*t) * envelope(v, 0.1f, 0.8f, 0.1f);
+            break;
         default:
             break;
         }
