@@ -1,7 +1,7 @@
 {
     "DebugMode": false,
     "Tiny": true,
-    "Fullscreen": false,
+    "Fullscreen": true,
     "Sound": true,
     "XRes": 1920,
     "YRes": 1080,
