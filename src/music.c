@@ -51,12 +51,12 @@ inline float wave(float t) {
         }
 
         float f = freq(n);
-        float w = fmodf(u, 1.f);
+        float v = fmodf(u, 1.f);
 
         switch(id) {
         case 0:
         case 1:
-            out += sinf(f*t) * envelope(w, 0.1f, 0.8f, 0.1f);
+            out += sinf(f*t) * envelope(v, 0.1f, 0.8f, 0.1f);
             break;
         default:
             break;
