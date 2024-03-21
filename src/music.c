@@ -16,8 +16,6 @@
 #define SEQUENCE(dur_ratio,num_repeat,...) \
     NUMARGS(__VA_ARGS__),dur_ratio,num_repeat,__VA_ARGS__
 
-#define REP(...) __VA_ARGS__,
-
 #define NONE -1 // special note indicating no note playing
 
 static char sequences[] = {
