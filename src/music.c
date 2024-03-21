@@ -13,15 +13,16 @@
 
 // dur_ratio: the duration of the note will be BASE_DURATION/dur_ratio
 // num_repeat: how many times to repeat the sequence, 0 for inifinite loop
-#define SEQUENCE(dur_ratio,num_repeat,...) \
-    NUMARGS(__VA_ARGS__),dur_ratio,num_repeat,__VA_ARGS__
+// delay: when to start playing the sequence, as a multiple of BASE_DURATION
+#define SEQUENCE(delay,dur_ratio,num_repeat,...) \
+    NUMARGS(__VA_ARGS__),delay,dur_ratio,num_repeat,__VA_ARGS__
 
 #define NONE -1 // special note indicating no note playing
 
 static char sequences[] = {
-    SEQUENCE(2, 0, D(3), F(3), C(3), A(2)),
-    SEQUENCE(2, 1, F(3), A(3), E(3), C(3)),
-    SEQUENCE(20, 0,
+    SEQUENCE(0, 2, 0, D(3), F(3), C(3), A(2)),
+    SEQUENCE(0, 2, 1, F(3), A(3), E(3), C(3)),
+    SEQUENCE(1, 20, 0,
         C(4), E(4), G(4), B(4),
         C(4), E(4), G(4), B(4),
         C(4), E(4), G(4), B(4),
@@ -46,18 +47,27 @@ inline float wave(float t) {
     float out = 0.f;
 
     int id = 0;
-    for(char* seq = sequences; seq < sequences + SEQS_SIZE; seq += 3 + *seq, id++) {
+    for(char* seq = sequences; seq < sequences + SEQS_SIZE; seq += 4 + *seq, id++) {
+
         int num_notes  = (int)seq[0];
-        int dur_ratio  = (int)seq[1];
-        int num_repeat = (int)seq[2];
-        char* notes = &seq[3];
+        float delay = ((float)seq[1]);
+        int dur_ratio  = (int)seq[2];
+        int num_repeat = (int)seq[3];
+        char* notes = &seq[4];
+        
+        t -= delay * BASE_DURATION;
+        // ignore note if sequence has not started yet
+        if(t < 0.f) {
+            continue;
+        }
 
         float d = BASE_DURATION / (float)dur_ratio;
         float u = t/d;
         char n = notes[((int)u) % num_notes];
 
-        // ignore note if outside of repetition range or
-        // no note is played
+        // ignore note if outside of repetition range, or
+        // no note is played, or before the start of the
+        // sequence
         if(
             (num_repeat > 0
                 && (int)(u/(float)num_notes) >= num_repeat)
