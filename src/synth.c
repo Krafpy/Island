@@ -106,14 +106,13 @@ float tri(float t) {
 float saw(float t) {
     __asm {
     fld1                // 1
-    fadd st, st         // 2
-    fld dword ptr [t]   // t, 2
-    fldpi               // pi, t, 2
-    fdivp st(1), st     // t/pi, 2
-    fprem               // mod(t/pi,2), 2
-    fstp st(1)          // mod(t/pi,2)
-    fld1                // 1, mod(t/pi,2)
-    fsubp st(1), st     // mod(t/pi,2)-1
+    fld t               // t, 1
+    fldpi               // pi, t, 1
+    fadd st, st         // 2pi, t, 1
+    fdivp st(1), st     // t/(2pi), 1
+    fprem               // mod(t/(2pi),1), 1
+    fadd st, st         // 2mod(t/(2pi),1), 1
+    fsubrp st(1), st    // 2mod(t/(2pi),1)-1
     };
 }
 
