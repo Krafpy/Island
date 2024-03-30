@@ -252,7 +252,9 @@ vec3 cubePos() {
 vec3 cubeTransform(vec3 p) {
     p -= cubePos();
     p.xz *= rot(3.*params.z);
-    p.yx *= rot(3.*params.z);
+    p.yx *= rot(3.7*params.z);
+    p.yz *= rot(-1.9*params.z);
+    p.zx *= rot(1.2*params.z + sin(3.*params.z));
     return p;
 }
 
@@ -528,27 +530,43 @@ void main()
     
     // 45
     rt = sincos(0.1*params.z-0.8);
-    t = T(10., vec3(0.,t+6.,0.), vec3(rt.y,5.,rt.x));
+    t = T(2.5, vec3(0.,t+6.,0.), vec3(rt.y,5.,rt.x));
+    // 47.5
+    rt = sincos(0.1*params.z-0.5);
+    t = T(2.5, vec3(0.,t+6.,0.), vec3(rt.y,15.,rt.x));
+    // 50
+    rt = sincos(0.1*params.z-0.3);
+    t = T(5., vec3(0.,t+6.,0.), vec3(rt.y,25.,rt.x));
+    // 52.5
+    // rt = sincos(0.1*params.z-0.0);
+    // t = T(2.5, vec3(0.,t+6.,0.), vec3(rt.y,35.,rt.x));
     
     // 55
     rt = 30.*sincos(0.1*params.z);
     t = T(5., vec3(0.,10.,0.), vec3(rt.y,5.,rt.x));
     
     // 60
-    ct = 5.*sincos(3.3-t*0.05);
-    t = T(5., vec3(4.,0.,-30.), vec3(ct.x,5.,ct.y));
+    ct = 40.*sincos(3.3-t*0.05);
+    t = T(5., vec3(0.,0.,0.), vec3(ct.x,1.,ct.y));
     
     // 65
     ct = 40.*sincos(0.03*t);
-    t = T(10., vec3(0.,0.,0.), vec3(ct.x,1.,ct.y));
+    t = T(5., vec3(0.,0.,0.), vec3(ct.x,1.,ct.y));
+
+    // 70
+    rt = sincos(0.1*params.z-0.3);
+    t = T(5., vec3(0.,0.,0.), vec3(rt.y, 50.,rt.x));
     
     // 75
     ct = 50.*sincos(0.02*t+3.);
-    T(10., vec3(0.,-1.,0.), vec3(ct.y,10.,ct.x));
+    t = T(5., vec3(0.,-1.,0.), vec3(ct.y,10.,ct.x));
     
-    // 85
-    ct = 20.*sincos(t*0.1+1.);
-    t = T(10., vec3(0.,-5.+t*0.5,0.), vec3(ct.x,-t*0.5,ct.y));
+    // 80
+    t = T(10., vec3(-30.+t,0.+0.7*t,0.), vec3(-4.,1.-0.5*t,-1.));
+    
+    // 90
+    ct = 20.*sincos(t*0.1+3.);
+    t = T(5., vec3(0.,-5.+t*0.5,0.), vec3(ct.x,-t*0.5,ct.y));
     
     // 95
     vec3 c = cubePos();
@@ -584,6 +602,7 @@ void main()
     uv += (2.*hash32(333.*uv+params.z).xy-1.)*0.0005; // randomize edges for a "good enough" antialiasing
     rd = normalize(uv.x*right + uv.y*up + forward);
     
+    outCol = vec4(1.,0.,0.,1.);
     
     float h = traverse(ro, rd, 100, 100, false).x;
     if(h > 0.) {
