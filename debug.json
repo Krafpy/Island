@@ -3,7 +3,7 @@
     "Tiny": false,
     "Fullscreen": false,
     "Sound": true,
-    "XRes": 1280,
-    "YRes": 720,
+    "XRes": 640,
+    "YRes": 480,
     "OutName": "main"
 }

@@ -8,13 +8,13 @@ layout (binding=0) uniform sampler2D previousFrame;
 out vec4 outCol;
 
 // constants
-float SQRT32 = 0.86602540378;
-float SQRT3 = 1.73205080757;
-float PI = 3.1415926535;
+float SQRT32 = 0.86602540;
+float SQRT3 = 1.73205080;
+float PI = 3.141593;
 
 // hex grid settings
 float RI = 1.;
-float RC = 1.15470053838; // RI/SQRT32;
+float RC = 1.15470053; // RI/SQRT32;
 
 
 vec2 sincos(float x){
@@ -107,15 +107,18 @@ float hexSphIntersect(vec2 ro, vec2 rd){
     return sqrt(delta) - b;
 }
 
-vec2 hexNormal(vec2 p) {
-    float k = step(0.5*RC, abs(p.y));
-    return sign(p)*vec2(1.-0.5*k, k*SQRT32);
-}
+// vec2 hexNormal(vec2 p) {
+//     float k = step(0.5*RC, abs(p.y));
+//     return sign(p)*vec2(1.-0.5*k, k*SQRT32);
+// }
 
 // visualization: https://editor.p5js.org/krafpy/sketches/TQhvnNLGk
 float hexIntersect(vec2 ro, vec2 rd){
     float t = hexSphIntersect(ro, rd);
-    vec2 n = hexNormal(ro + rd*t);
+    // vec2 n = hexNormal(ro + rd*t);
+    vec2 p = ro + rd*t;
+    float k = step(0.5*RC, abs(p.y));
+    vec2 n = sign(p)*vec2(1.-0.5*k, k*SQRT32);
     return (RI - dot(ro, n))/dot(rd, n);
 }
 
@@ -186,15 +189,13 @@ vec2 getHexHeights(vec2 hexCenter, vec3 rand) {
     
     float hexHeight = mix(defaultHexHeight, islandHexHeight, isIsland);
     
-    float t = params.z;
     float islandHexDispY;
     // cone-like displacement of individual hexagons
     float islandTargetHexDispY = 15.*islandScale + 1.*rand.y*(1.-islandScale) + 1.;
     // island build start
-    t -= 17.;
     float s = step(length(hexCenter), 3.);
     float rh = mix(rand.z*5., 4.5, s);
-    islandHexDispY = islandTargetHexDispY*smoothstep(0.,islandTargetHexDispY*0.1,t/6.-rh);
+    islandHexDispY = islandTargetHexDispY*smoothstep(0.,islandTargetHexDispY*0.1,(params.z-17.)/6.-rh);
     // altitude of the whole island
     islandHexDispY += islandAltitude();
     
@@ -253,7 +254,7 @@ vec3 cubeTransform(vec3 p) {
     p -= cubePos();
     p.xz *= rot(3.*params.z);
     p.yx *= rot(3.7*params.z);
-    p.yz *= rot(-1.9*params.z);
+    // p.yz *= rot(-1.9*params.z);
     p.zx *= rot(1.2*params.z + sin(3.*params.z));
     return p;
 }
@@ -262,8 +263,8 @@ float mapCube(vec3 p){ // x = sdf
     p = cubeTransform(p);
     
     vec3 b = vec3(0.5, 0.5, 0.5);
-    float d = sdBox(p, b) - 0.4;
-    return (d + 0.1/length(p))*0.8;
+    float d = sdBox(p, b) - 0.2;
+    return (d - 0.1/length(p))*0.8;
 }
 
 float map(vec3 p) {
@@ -333,12 +334,12 @@ vec3 normal(vec3 p){
 vec3 skyCol = vec3(0.8,0.82,0.9);
 vec3 sunCol = vec3(1.2, 1.1, 1.);
 vec3 sunDir = normalize(vec3(-0.6, 0.4, 1.));
+// vec3 sunDir = vec3(-0.487,  0.324,  0.811);
 
 vec3 background(vec3 ro, vec3 rd) {
     float s = max(dot(rd, sunDir), 0.);
     vec3 bg = mix(skyCol, sunCol, pow(s,8.0));
-    s = max(-rd.y, 0.);
-    bg = mix(bg, vec3(0.), s);
+    bg = mix(bg, vec3(0.), max(-rd.y, 0.));
     return bg;
 }
 
@@ -395,8 +396,10 @@ vec3 lighting(vec3 p, vec3 ro, vec3 rd) {
 
     float isUnder = mapHexs(p, hex).y;
     
-    float cubeDst = mapCube(p);
     vec3 cubeRelPos = cubeTransform(p);
+    vec3 cubeCol = vec3(1.,0.5, 0.3);
+    float cubeDst = mapCube(p);
+    float atten = 3. / (1.+cubeDst*cubeDst);
     float isCube = step(cubeDst,0.01);
     float cubeNoise = 1.-pow(fbm(cubeRelPos), 5.);
     float cubeRough = clamp(1.-cubeNoise, 0.1, 1.);
@@ -461,10 +464,10 @@ vec3 lighting(vec3 p, vec3 ro, vec3 rd) {
     col *= ao(p, n);
     
     // light cube illumination
-    vec3 cubeCol = vec3(1.,0.5, 0.3);
-    float atten = 3. / (1.+cubeDst*cubeDst);
-    col += cubeCol * atten * max(0., dot(normalize(cubePos()-p),n)) * (1.-isCube);
-    col += 2.*cubeCol * cubeNoise * isCube * smoothstep(1.6,1.,length(cubePos()-p));
+    // vec3 cubeCol = vec3(1.,0.5, 0.3);
+    // float atten = 3. / (1.+cubeDst*cubeDst);
+    col += cubeCol * atten * max(0., dot(normalize(cubePos()-p),n)) * (1.-isCube)
+        + 2.*cubeCol * cubeNoise * isCube * smoothstep(1.6,1.,length(cubePos()-p));
     
     return col;
 }
@@ -529,21 +532,21 @@ void main()
     t = T(5., vec3(rt.y,5.,rt.x), vec3(ct.y,1.,ct.x));
     
     // 45
-    rt = sincos(0.1*params.z-0.8);
-    t = T(2.5, vec3(0.,t+6.,0.), vec3(rt.y,5.,rt.x));
+    ct = sincos(0.1*params.z-0.8);
+    t = T(2.5, vec3(0.,t+6.,0.), vec3(ct.y,5.,ct.x));
     // 47.5
-    rt = sincos(0.1*params.z-0.5);
-    t = T(2.5, vec3(0.,t+6.,0.), vec3(rt.y,15.,rt.x));
+    ct = sincos(0.1*params.z-0.5);
+    t = T(2.5, vec3(0.,t+6.,0.), vec3(ct.y,15.,ct.x));
     // 50
-    rt = sincos(0.1*params.z-0.3);
-    t = T(5., vec3(0.,t+6.,0.), vec3(rt.y,25.,rt.x));
+    ct = sincos(0.1*params.z-0.3);
+    t = T(5., vec3(0.,t+6.,0.), vec3(ct.y,25.,ct.x));
     // 52.5
     // rt = sincos(0.1*params.z-0.0);
     // t = T(2.5, vec3(0.,t+6.,0.), vec3(rt.y,35.,rt.x));
     
     // 55
-    rt = 30.*sincos(0.1*params.z);
-    t = T(5., vec3(0.,10.,0.), vec3(rt.y,5.,rt.x));
+    ct = 30.*sincos(0.1*params.z);
+    t = T(5., vec3(0.,10.,0.), vec3(ct.y,5.,ct.x));
     
     // 60
     ct = 40.*sincos(3.3-t*0.05);
@@ -554,8 +557,8 @@ void main()
     t = T(5., vec3(0.,0.,0.), vec3(ct.x,1.,ct.y));
 
     // 70
-    rt = sincos(0.1*params.z-0.3);
-    t = T(5., vec3(0.,0.,0.), vec3(rt.y, 50.,rt.x));
+    ct = sincos(0.1*params.z-0.3);
+    t = T(5., vec3(0.,0.,0.), vec3(ct.y, 50.,ct.x));
     
     // 75
     ct = 50.*sincos(0.02*t+3.);
@@ -613,14 +616,6 @@ void main()
         col = background(ro, rd);
     }
     
-    col = clamp(col, 0., 1.);
-    col = pow(col, vec3(0.45)); // gamma correction
-    
-    // fade in/out
-    col *= smoothstep(0.,1.,params.z);
-    // fade out
-    col *= smoothstep(136.,135.,params.z);
-    
-    col = mix(col, prevCol, 0.4); // motion blur
-    outCol = vec4(col,1.0);
+    outCol = vec4(mix(pow(clamp(col, 0., 1.), vec3(0.45)) * smoothstep(0.,1.,params.z) * smoothstep(136.,135.,params.z),
+                prevCol, 0.4),1.0);
 }

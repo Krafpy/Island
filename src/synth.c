@@ -103,18 +103,18 @@ float tri(float t) {
 }
 
 // Saw tooth wave oscillator.
-float saw(float t) {
-    __asm {
-    fld1                // 1
-    fld t               // t, 1
-    fldpi               // pi, t, 1
-    fadd st, st         // 2pi, t, 1
-    fdivp st(1), st     // t/(2pi), 1
-    fprem               // mod(t/(2pi),1), 1
-    fadd st, st         // 2mod(t/(2pi),1), 1
-    fsubrp st(1), st    // 2mod(t/(2pi),1)-1
-    };
-}
+// float saw(float t) {
+//     __asm {
+//     fld1                // 1
+//     fld t               // t, 1
+//     fldpi               // pi, t, 1
+//     fadd st, st         // 2pi, t, 1
+//     fdivp st(1), st     // t/(2pi), 1
+//     fprem               // mod(t/(2pi),1), 1
+//     fadd st, st         // 2mod(t/(2pi),1), 1
+//     fsubrp st(1), st    // 2mod(t/(2pi),1)-1
+//     };
+// }
 
 // Square wave oscillator
 float sqr(float t) {

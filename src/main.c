@@ -156,12 +156,12 @@ int WINAPI wWinMain(
 
         #define INTRO_NOT_DONE elapsedTime < INTRO_DURATION*1000
         #endif
-
+        
+        MSG msg;
         #ifdef DEBUG
         // Store a variable to check if the window needs to be closed
         BOOL done = FALSE;
         SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)&done);
-        MSG msg;
         while(!done)
         #else
         while(!GetAsyncKeyState(VK_ESCAPE) && INTRO_NOT_DONE)
@@ -172,6 +172,8 @@ int WINAPI wWinMain(
                 TranslateMessage(&msg); // translate keyboard messages if necessary
                 DispatchMessage(&msg); // call the window procedure
             }
+            #else
+            PeekMessage(&msg, hwnd, 0, 0, PM_REMOVE);
             #endif
 
             // Pass the elapsed time in seconds since startup to the shaders
