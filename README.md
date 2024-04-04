@@ -10,9 +10,7 @@
 
 ## Build
 
-### Building the intro
-
-Building requires the following tools to be installed and accessible via a
+Building the intro requires the following tools to be installed and accessible via a
 PowerShell command line (e.g. in PATH):
 
 - Microsoft Visual C++ compiler `cl.exe` and linker `link.exe` for x86
