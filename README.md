@@ -1,16 +1,17 @@
 # 4k intro template
 
-This is a (yet another) example minimal template for building 4kB
+This is (yet another) example minimal template for building 4kB
 [intros](https://en.wikipedia.org/wiki/Demoscene) (but can apply
 to other sizes as well) on Windows, with an emphasis on being
-*educational and beginner-friendly*. It was initially inspired by
+*educational and beginner-friendly*, and will eventually improve over time.
+It was initially inspired by
 [Inigo Quilez's (iq) templates](https://madethisthing.com/iq/Demo-Framework-4k)
 for 4k shader-based intros, but with a more explicit
 code and lots of comments. It is a command-line only alternative to existing
 frameworks and only requires Visual Studio Build Tools and common
 demoscene tools to be installed. This was
 made in order to clearly detail the compilation process without
-MSBuild/Visual Studio's automation. For Visual Studio compatible frameworks,
+MSBuild/Visual Studio's automation. For more robust and Visual Studio compatible frameworks,
 you probably want to look into iq's one or
 [Leviathan](https://github.com/armak/Leviathan-2.0).
 
